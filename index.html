@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,50 +16,252 @@
   <!-- Header -->
   <header class="bg-green-100 text-center py-4 shadow">
     <h1 class="text-2xl font-bold">🩺 Symptom Navigator</h1>
-  </header>
-
-  <!-- Gender Selection -->
-  <div id="gender-selection" class="text-center py-6">
+  </header>  <!-- Gender Selection -->  <div id="gender-selection" class="text-center py-6">
     <h2 class="text-lg font-semibold mb-4">Select Gender</h2>
     <button onclick="selectGender('male')" class="bg-green-500 text-white px-4 py-2 rounded-full mx-2">Male</button>
     <button onclick="selectGender('female')" class="bg-green-500 text-white px-4 py-2 rounded-full mx-2">Female</button>
-  </div>
+  </div>  <!-- Image Display and Click Zones -->  <div id="body-section" class="relative flex justify-center hidden">
+    <img id="body-image" src="" alt="Body Model" class="max-w-xs" /><!-- Clickable zones -->
+<div class="click-zone" style="top: 10%; left: 40%; width: 20%; height: 10%;" onclick="zoneClicked('Head')"></div>
+<div class="click-zone" style="top: 20%; left: 40%; width: 20%; height: 10%;" onclick="zoneClicked('Chest')"></div>
+<div class="click-zone" style="top: 35%; left: 40%; width: 20%; height: 15%;" onclick="zoneClicked('Abdomen')"></div>
+<div class="click-zone" style="top: 55%; left: 25%; width: 15%; height: 20%;" onclick="zoneClicked('Left Hand')"></div>
+<div class="click-zone" style="top: 55%; left: 60%; width: 15%; height: 20%;" onclick="zoneClicked('Right Hand')"></div>
+<div class="click-zone" style="top: 80%; left: 35%; width: 12%; height: 15%;" onclick="zoneClicked('Left Leg')"></div>
+<div class="click-zone" style="top: 80%; left: 52%; width: 12%; height: 15%;" onclick="zoneClicked('Right Leg')"></div>
 
-  <!-- Image Display and Click Zones -->
-  <div id="body-section" class="relative flex justify-center hidden">
-    <img id="body-image" src="" alt="Body Model" class="max-w-xs" />
-
-    <!-- Clickable zones -->
-    <div class="click-zone" style="top: 10%; left: 40%; width: 20%; height: 10%;" onclick="zoneClicked('Head')"></div>
-    <div class="click-zone" style="top: 20%; left: 40%; width: 20%; height: 10%;" onclick="zoneClicked('Chest')"></div>
-    <div class="click-zone" style="top: 35%; left: 40%; width: 20%; height: 15%;" onclick="zoneClicked('Abdomen')"></div>
-    <div class="click-zone" style="top: 55%; left: 25%; width: 15%; height: 20%;" onclick="zoneClicked('Left Hand')"></div>
-    <div class="click-zone" style="top: 55%; left: 60%; width: 15%; height: 20%;" onclick="zoneClicked('Right Hand')"></div>
-    <div class="click-zone" style="top: 80%; left: 35%; width: 12%; height: 15%;" onclick="zoneClicked('Left Leg')"></div>
-    <div class="click-zone" style="top: 80%; left: 52%; width: 12%; height: 15%;" onclick="zoneClicked('Right Leg')"></div>
-  </div>
-
-  <!-- Output -->
-  <div id="output" class="text-center mt-6 text-lg font-medium"></div>
-
-  <script>
+  </div>  <!-- Output -->  <div id="output" class="text-center mt-6 text-lg font-medium"></div>  <!-- Follow-up Questions -->  <div id="followup-section" class="text-center mt-6 hidden">
+    <h3 class="text-xl font-semibold">Follow-Up Questions</h3>
+    <div id="followup-questions" class="mt-4 space-y-2"></div>
+    <button onclick="submitFollowup()" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">Submit Follow-Up</button>
+  </div>  <script>
     function selectGender(gender) {
       const imageElement = document.getElementById('body-image');
       const section = document.getElementById('body-section');
       const genderSection = document.getElementById('gender-selection');
       if (gender === 'male') {
-        imageElement.src = 'https://i.postimg.cc/c4SPF0Gj/IMG-20250613-WA0005.jpg'; // Replace with your actual male image path
+        imageElement.src = 'https://i.postimg.cc/c4SPF0Gj/IMG-20250613-WA0005.jpg';
       } else {
-        imageElement.src = 'https://i.postimg.cc/hjBgqx78/24469993-realistic-front-muscles-of-woman-isolated-in-white-background.jpg'; // Replace with your actual female image path
+        imageElement.src = 'https://i.postimg.cc/hjBgqx78/24469993-realistic-front-muscles-of-woman-isolated-in-white-background.jpg';
       }
       genderSection.classList.add('hidden');
       section.classList.remove('hidden');
     }
 
+    const symptomsData = {
+      "Head": ["Headache", "Dizziness", "Blurred Vision", "Nausea"],
+      "Chest": ["Chest Pain", "Shortness of Breath", "Cough", "Palpitations"],
+      "Abdomen": ["Stomach Pain", "Bloating", "Nausea", "Vomiting"],
+      "Left Hand": ["Numbness", "Pain", "Swelling", "Weak Grip"],
+      "Right Hand": ["Tingling", "Pain", "Swelling", "Cold Sensation"],
+      "Left Leg": ["Cramping", "Swelling", "Tingling", "Numbness"],
+      "Right Leg": ["Pain", "Stiffness", "Burning Sensation", "Fatigue"]
+    };
+
+    const followupBank = {
+      "Head": ["Is it a throbbing headache?", "Do you have nausea?", "Is there light sensitivity?"],
+      "Chest": ["Do you feel breathlessness?", "Is there chest tightness?", "Does the pain increase while breathing?"],
+      "Abdomen": ["Is the pain after eating?", "Do you feel bloated?", "Do you have diarrhea?"]
+    };
+
+    let selectedZone = "";
+    let selectedSymptoms = [];
+    let followupAnswers = [];
+
     function zoneClicked(part) {
+      selectedZone = part;
       const output = document.getElementById('output');
-      output.innerHTML = `🩺 <strong>${part}</strong> selected.<br>Loading symptoms...`;
+      const symptoms = symptomsData[part] || [];
+
+      const checkboxes = symptoms.map(s => `
+        <label class="block">
+          <input type="checkbox" name="symptom" value="${s}" class="mr-2" />
+          ${s}
+        </label>
+      `).join('');
+
+      output.innerHTML = `
+         <strong>${part}</strong> selected.
+        <div class="mt-4 text-left inline-block">
+          <form id="symptom-form">
+            ${checkboxes}
+            <button type="button" onclick="showCauses('${part}')" class="mt-4 bg-green-500 text-white px-4 py-2 rounded">Find Causes</button>
+          </form>
+        </div>
+      `;
+
+      showFollowupQuestions(part);
     }
-  </script>
-</body>
+
+   function showCauses(part) {
+  selectedSymptoms = [...document.querySelectorAll('input[name="symptom"]:checked')].map(cb => cb.value);
+  const output = document.getElementById('output');
+
+  if (selectedSymptoms.length === 0) {
+    output.innerHTML += `<p class="text-red-600 mt-2">Please select at least one symptom.</p>`;
+    return;
+  }
+
+  const causes = {
+    "Headache": ["Migraine", "Tension headache", "Dehydration"],
+    "Dizziness": ["Low BP", "Inner ear issue", "Vertigo"],
+    "Blurred Vision": ["Fatigue", "High BP", "Sugar"],
+    "Chest Pain": ["Heart disease", "Muscle strain", "Acidity"],
+    "Cough": ["Cold", "Allergy", "Asthma"],
+    "Stomach Pain": ["Constipation", "Acidity", "Digestive issues"],
+    "Swelling": ["Allergy", "Organ inflammation", "Fluid retention"]
+  };
+
+  let resultSet = new Set();
+  selectedSymptoms.forEach(sym => {
+    (causes[sym] || ["No known causes"]).forEach(c => resultSet.add(c));
+  });
+
+  const causeList = [...resultSet].map(c => `<li>${c}</li>`).join('');
+  output.innerHTML += `
+    <div class="mt-4">
+      <strong>Possible Causes based on selected symptoms:</strong>
+      <ul class="list-disc list-inside mt-2 text-left inline-block">${causeList}</ul>
+    </div>
+  `;
+}
+
+    function showFollowupQuestions(zone) {
+      const box = document.getElementById("followup-questions");
+      box.innerHTML = "";
+      followupAnswers = [];
+      const questions = followupBank[zone] || [];
+
+      questions.forEach((q, i) => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <p>${q}</p>
+          <select onchange="saveFollowup(${i}, this.value)" class="border rounded px-2 py-1">
+            <option value="">Select</option>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        `;
+        box.appendChild(div);
+      });
+
+      document.getElementById("followup-section").classList.remove("hidden");
+    }
+
+    function saveFollowup(index, value) {
+      followupAnswers[index] = {
+        question: followupBank[selectedZone][index],
+        answer: value
+      };
+    }
+
+    function submitFollowup() {
+  const selectedSymptoms = [...document.querySelectorAll('input[name="symptom"]:checked')].map(cb => cb.value);
+
+  const finalData = {
+    part: selectedZone,
+    symptoms: selectedSymptoms,
+    answers: followupAnswers
+  };
+
+  console.log("🧠 Structured Data:", finalData);
+
+  const output = document.getElementById('output');
+  output.innerHTML = `
+    <div class="mt-6 p-4 bg-white rounded shadow max-w-lg mx-auto text-left">
+      <h2 class="text-xl font-semibold mb-2">📝 Summary</h2>
+      <p><strong>Selected Body Part:</strong> ${finalData.part}</p>
+      <p><strong>Symptoms Selected:</strong> ${finalData.symptoms.join(', ')}</p>
+      <p><strong>Follow-up Answers:</strong></p>
+      <ul class="list-disc list-inside">
+        ${finalData.answers.map(ans => `<li>${ans.answer}</li>`).join('')}
+      </ul>
+
+      <p class="mt-4"><strong>Structured JSON Data:</strong></p>
+      <pre class="bg-gray-100 p-2 rounded text-sm overflow-auto">
+${JSON.stringify(finalData, null, 2)}
+      </pre>
+
+      <button onclick="window.location.reload()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Start Over</button>
+    </div>
+  ` 
+
+  analyzeSymptoms();
+}
+function analyzeSymptoms() {
+  const specialistSet = new Set();
+  const testSet = new Set();
+  const actions = [];
+
+  const recommendationRules = {
+    "Headache": {
+      specialist: "Neurologist",
+      tests: ["MRI", "Hydration Check"],
+      action: "Rest in dark room. If persistent, consult Neurologist."
+    },
+    "Dizziness": {
+      specialist: "General Physician",
+      tests: ["BP Check", "Sugar Levels"],
+      action: "Hydrate and rest. Visit doctor if it continues."
+    },
+    "Blurred Vision": {
+      specialist: "Ophthalmologist",
+      tests: ["Eye Test", "Sugar Test"],
+      action: "Avoid screen time. Schedule an eye checkup."
+    },
+    "Nausea": {
+      specialist: "Gastroenterologist",
+      tests: ["Stool Test"],
+      action: "Take ORS. If frequent, see a doctor."
+    },
+    "Chest Pain": {
+      specialist: "Cardiologist",
+      tests: ["ECG", "Chest X-Ray"],
+      action: "Seek medical attention immediately."
+    },
+    "Shortness of Breath": {
+      specialist: "Pulmonologist",
+      tests: ["Chest X-Ray", "Pulse Oxymeter"],
+      action: "Sit upright. If severe, go to ER."
+    },
+    "Palpitations": {
+      specialist: "Cardiologist",
+      tests: ["ECG", "Blood Pressure"],
+      action: "Reduce caffeine. Monitor heart rate."
+    },
+    "Swelling": {
+      specialist: "Orthopedic",
+      tests: ["X-Ray", "Blood Test"],
+      action: "Apply ice. Visit doctor if swelling increases."
+    },
+    "Stomach Pain": {
+      specialist: "Gastroenterologist",
+      tests: ["Ultrasound", "Stool Test"],
+      action: "Avoid spicy food. See doctor if pain is severe."
+    }
+  };
+
+  selectedSymptoms.forEach(symptom => {
+    const rule = recommendationRules[symptom];
+    if (rule) {
+      specialistSet.add(rule.specialist);
+      rule.tests.forEach(t => testSet.add(t));
+      actions.push(rule.action);
+    }
+  });
+
+  const output = document.getElementById("output");
+  output.innerHTML += `
+    <div class="mt-6 p-4 bg-white rounded shadow max-w-lg mx-auto text-left">
+      <h2 class="text-xl font-semibold mb-2">🩺 Recommendations</h2>
+      <p><strong>Specialist(s) to consult:</strong> ${[...specialistSet].join(', ') || "N/A"}</p>
+      <p><strong>Suggested Tests:</strong> ${[...testSet].join(', ') || "N/A"}</p>
+      <p><strong>Advice:</strong></p>
+      <ul class="list-disc list-inside">
+        ${actions.map(a => `<li>${a}</li>`).join('') || "<li>No specific advice available.</li>"}
+      </ul>
+    </div>
+  `;
+}
+  </script></body>
 </html>
