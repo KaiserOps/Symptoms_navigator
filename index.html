@@ -1,306 +1,523 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Symptom Navigator</title>
+  <title>Smart Symptom Navigator</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .click-zone {
       position: absolute;
       cursor: pointer;
-      background-color: rgba(0, 255, 0, 0.2);
+      background: rgba(0, 255, 0, 0.10);
+      border-radius: 8px;
+      transition: box-shadow 0.2s, background 0.2s;
     }
+    .click-zone:hover { background: rgba(34,197,94,0.22); box-shadow:0 0 8px 2px #38b2ac44;}
+    .male-bg { background: radial-gradient(circle at 60% 20%, #e6f6ff 50px, #b6e0fe 300px, #0e2f44 100%);}
+    .female-bg { background: radial-gradient(circle at 40% 70%, #ffe6fa 60px, #fbb6ce 300px, #3b133e 100%);}
+    .neutral-bg { background: linear-gradient(135deg, #232526 0%, #414345 100%);}
+    select, option { color-scheme: dark;}
+    .mic-btn {background:#222;border-radius:50%;padding:4px 9px;display:inline-block;}
+    .mic-btn.active {background:#059669;}
+    .modal-bg {background:rgba(0,0,0,0.60);}
+    .modal {z-index:90;}
+    .dashboard-modal {z-index:100;}
   </style>
 </head>
-<body class="bg-green-50 text-gray-800 font-sans min-h-screen">
-  <!-- Header -->
-  <header class="bg-green-100 text-center py-4 shadow">
-    <h1 class="text-2xl font-bold">🩺 Symptom Navigator</h1>
-  </header>  <!-- Gender Selection -->  <div id="gender-selection" class="text-center py-6">
-    <h2 class="text-lg font-semibold mb-4">Select Gender</h2>
-    <button onclick="selectGender('male')" class="bg-green-500 text-white px-4 py-2 rounded-full mx-2">Male</button>
-    <button onclick="selectGender('female')" class="bg-green-500 text-white px-4 py-2 rounded-full mx-2">Female</button>
-  </div>  <!-- Image Display and Click Zones -->  <div id="body-section" class="relative flex justify-center hidden">
-    <img id="body-image" src="" alt="Body Model" class="max-w-xs" /><!-- Clickable zones -->
-<div class="click-zone" style="top: 10%; left: 40%; width: 20%; height: 10%;" onclick="zoneClicked('Head')"></div>
-<div class="click-zone" style="top: 20%; left: 40%; width: 20%; height: 10%;" onclick="zoneClicked('Chest')"></div>
-<div class="click-zone" style="top: 35%; left: 40%; width: 20%; height: 15%;" onclick="zoneClicked('Abdomen')"></div>
-<div class="click-zone" style="top: 55%; left: 25%; width: 15%; height: 20%;" onclick="zoneClicked('Left Hand')"></div>
-<div class="click-zone" style="top: 55%; left: 60%; width: 15%; height: 20%;" onclick="zoneClicked('Right Hand')"></div>
-<div class="click-zone" style="top: 80%; left: 35%; width: 12%; height: 15%;" onclick="zoneClicked('Left Leg')"></div>
-<div class="click-zone" style="top: 80%; left: 52%; width: 12%; height: 15%;" onclick="zoneClicked('Right Leg')"></div>
+<body class="neutral-bg min-h-screen text-gray-100 font-sans transition-colors duration-700">
 
-  </div>  <!-- Output -->  <div id="output" class="text-center mt-6 text-lg font-medium"></div>  <!-- Follow-up Questions -->  <div id="followup-section" class="text-center mt-6 hidden">
-    <h3 class="text-xl font-semibold">Follow-Up Questions</h3>
-    <div id="followup-questions" class="mt-4 space-y-2"></div>
-    <button onclick="submitFollowup()" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">Submit Follow-Up</button>
-  </div>  <script>
-    function selectGender(gender) {
-      const imageElement = document.getElementById('body-image');
-      const section = document.getElementById('body-section');
-      const genderSection = document.getElementById('gender-selection');
-      if (gender === 'male') {
-        imageElement.src = 'https://i.postimg.cc/c4SPF0Gj/IMG-20250613-WA0005.jpg';
-      } else {
-        imageElement.src = 'https://i.postimg.cc/hjBgqx78/24469993-realistic-front-muscles-of-woman-isolated-in-white-background.jpg';
-      }
-      genderSection.classList.add('hidden');
-      section.classList.remove('hidden');
-    }
+<!-- Language Toggle -->
+<div class="text-center my-3">
+  <button onclick="setLanguage('en')" class="bg-blue-400 text-white px-3 py-1 rounded mx-1">English</button>
+  <button onclick="setLanguage('hi')" class="bg-blue-400 text-white px-3 py-1 rounded mx-1">हिन्दी</button>
+  <button onclick="setLanguage('kn')" class="bg-blue-400 text-white px-3 py-1 rounded mx-1">ಕನ್ನಡ</button>
+</div>
 
-    const symptomsData = {
-      "Head": ["Headache", "Dizziness", "Blurred Vision", "Nausea"],
-      "Chest": ["Chest Pain", "Shortness of Breath", "Cough", "Palpitations"],
-      "Abdomen": ["Stomach Pain", "Bloating", "Nausea", "Vomiting"],
-      "Left Hand": ["Numbness", "Pain", "Swelling", "Weak Grip"],
-      "Right Hand": ["Tingling", "Pain", "Swelling", "Cold Sensation"],
-      "Left Leg": ["Cramping", "Swelling", "Tingling", "Numbness"],
-      "Right Leg": ["Pain", "Stiffness", "Burning Sensation", "Fatigue"]
-    };
+<header class="bg-white/10 dark:bg-white/10 backdrop-blur-md text-center py-6 shadow-md rounded-xl mx-auto mb-4 max-w-2xl">
+  <h1 class="text-4xl font-extrabold text-green-400 dark:text-green-400 drop-shadow-md tracking-wide">
+    <span data-i18n="appTitle">Symptom Navigator</span> 🩺
+  </h1>
+  <p class="mt-2 italic text-blue-400 text-base" data-i18n="subtitle">Your smart step towards understanding your health</p>
+</header>
 
-    const followupBank = {
-      "Head": ["Is it a throbbing headache?", "Do you have nausea?", "Is there light sensitivity?"],
-      "Chest": ["Do you feel breathlessness?", "Is there chest tightness?", "Does the pain increase while breathing?"],
-      "Abdomen": ["Is the pain after eating?", "Do you feel bloated?", "Do you have diarrhea?"]
-    };
+<!-- Gender Selection -->
+<div id="gender-selection" class="text-center py-5">
+  <h2 class="text-lg font-semibold mb-4" data-i18n="selectGender">Select Gender</h2>
+  <button onclick="selectGender('male')" class="bg-green-500 hover:bg-green-600 transition-colors duration-200 text-white px-6 py-2 rounded-full mx-2 shadow-md">👨 <span data-i18n="male">Male</span></button>
+  <button onclick="selectGender('female')" class="bg-pink-500 hover:bg-pink-600 transition-colors duration-200 text-white px-6 py-2 rounded-full mx-2 shadow-md">👩 <span data-i18n="female">Female</span></button>
+</div>
 
-    let selectedZone = "";
-    let selectedSymptoms = [];
-    let followupAnswers = [];
+<!-- Body Section -->
+<div id="body-section" class="relative flex justify-center hidden mt-4">
+  <img id="body-image" src="" alt="Body Model" class="max-w-xs rounded-2xl shadow-lg border-2 border-green-200 dark:border-green-700" />
+  <!-- click-zones -->
+  <div class="click-zone" style="top: 13%; left: 44%; width: 12%; height: 10%;" onclick="zoneClicked('Head', event)"></div>
+  <div class="click-zone" style="top: 27%; left: 42%; width: 16%; height: 13%;" onclick="zoneClicked('Chest', event)"></div>
+  <div class="click-zone" style="top: 41%; left: 44%; width: 12%; height: 13%;" onclick="zoneClicked('Abdomen', event)"></div>
+  <div class="click-zone" style="top: 62%; left: 30%; width: 12%; height: 24%;" onclick="zoneClicked('Left Leg', event)"></div>
+  <div class="click-zone" style="top: 62%; left: 58%; width: 12%; height: 24%;" onclick="zoneClicked('Right Leg', event)"></div>
+  <div id="options-popover" class="absolute z-40 hidden"></div>
+</div>
 
-    function zoneClicked(part) {
-      selectedZone = part;
-      const output = document.getElementById('output');
-      const symptoms = symptomsData[part] || [];
+<!-- Questionnaire -->
+<div id="qa-modal" class="hidden fixed inset-0 modal-bg flex items-center justify-center z-50 modal">
+  <div class="bg-gray-900/95 rounded-xl shadow-xl max-w-md w-full p-6 border border-green-600">
+    <h2 class="text-lg mb-2 font-bold text-green-400" id="qa-title"></h2>
+    <div id="qa-questions" class="mb-2"></div>
+    <button onclick="closeQAModal()" class="mt-3 bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white">Close</button>
+  </div>
+</div>
 
-      const checkboxes = symptoms.map(s => `
-        <label class="block">
-          <input type="checkbox" name="symptom" value="${s}" class="mr-2" />
-          ${s}
-        </label>
-      `).join('');
+<!-- Output & Doctor View -->
+<div id="output" class="text-center mt-6 text-lg font-medium"></div>
+<div class="hidden fixed inset-0 modal-bg flex items-center justify-center dashboard-modal" id="sessions-modal" >
+  <div class="bg-gray-900/95 p-5 rounded-lg w-full max-w-2xl shadow-2xl border border-green-700">
+    <h2 class="text-2xl font-bold mb-4 text-green-400" id="sessions-title">All Patient Sessions</h2>
+    <div id="sessions-list"></div>
+    <button onclick="closeAllSessions()" class="mt-4 bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded">Close</button>
+  </div>
+</div>
+<div id="doctor-summary" class="hidden fixed inset-0 modal-bg flex items-center justify-center z-50 modal">
+  <div class="bg-gray-900/95 dark:bg-gray-800/95 p-6 rounded-lg w-full max-w-xl shadow-2xl border border-green-700">
+    <h2 class="text-2xl font-bold mb-4" data-i18n="doctorSummary">🩺 Professional Doctor View</h2>
+    <div id="summary-content" class="text-left text-sm space-y-2"></div>
+    <button onclick="closeDoctorSummary()" class="mt-4 bg-red-500 hover:bg-red-700 transition-all duration-200 text-white px-4 py-2 rounded" data-i18n="close">Close</button>
+  </div>
+</div>
 
-      output.innerHTML = `
-         <strong>${part}</strong> selected.
-        <div class="mt-4 text-left inline-block">
-          <form id="symptom-form">
-            ${checkboxes}
-            <button type="button" onclick="showCauses('${part}')" class="mt-4 bg-green-500 text-white px-4 py-2 rounded">Find Causes</button>
-          </form>
-        </div>
-      `;
+<script>
+let currentLang = 'en';
+let selectedGender = null;
+let selectedZone = "";
+let answers = {};
+let sessionId = null;
 
-      showFollowupQuestions(part);
-    }
+const translations = {
+  en: {
+    appTitle: "Symptom Navigator",
+    subtitle: "Your smart step towards understanding your health",
+    selectGender: "Select Gender",
+    male: "Male",
+    female: "Female",
+    start: "Start",
+    doctorSummary: "Doctor View: Patient Report",
+    close: "Close",
+    submit: "Submit",
+    next: "Next",
+    speak: "🔊 Read",
+    mic: "🎤 Speak",
+    summary: "Summary",
+    specialist: "Specialist",
+    tests: "Recommended Tests",
+    action: "Triage Advice",
+    followup: "Follow-up Q&A",
+    selectedBodyPart: "Body Part",
+    answer: "Answer",
+    responses: "Responses",
+    startOver: "Start Over",
+    viewDoctorSummary: "View Doctor Summary",
+    timestamp: "Time",
+    wellnessTip: "Wellness Tip",
+    pleaseAnswer: "Please answer all questions.",
+    viewAllSessions: "View All Sessions"
+  },
+  hi: {
+    appTitle: "लक्षण नेविगेटर",
+    subtitle: "स्वास्थ्य समझने का स्मार्ट तरीका",
+    selectGender: "लिंग चुनें",
+    male: "पुरुष",
+    female: "महिला",
+    start: "शुरू करें",
+    doctorSummary: "डॉक्टर दृश्य: रोगी रिपोर्ट",
+    close: "बंद करें",
+    submit: "सबमिट करें",
+    next: "आगे",
+    speak: "🔊 पढ़ें",
+    mic: "🎤 बोलें",
+    summary: "सारांश",
+    specialist: "विशेषज्ञ",
+    tests: "सिफारिश की गई जांच",
+    action: "त्रैज सलाह",
+    followup: "अनुवर्ती Q&A",
+    selectedBodyPart: "शरीर का भाग",
+    answer: "उत्तर",
+    responses: "सभी उत्तर",
+    startOver: "फिर से शुरू करें",
+    viewDoctorSummary: "डॉक्टर सारांश देखें",
+    timestamp: "समय",
+    wellnessTip: "स्वास्थ्य सुझाव",
+    pleaseAnswer: "कृपया सभी सवालों के जवाब दें।",
+    viewAllSessions: "सभी सत्र देखें"
+  },
+  kn: {
+    appTitle: "ಲಕ್ಷಣ ನ್ಯಾವಿಗೇಟರ್",
+    subtitle: "ನಿಮ್ಮ ಆರೋಗ್ಯವನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ ಸ್ಮಾರ್ಟ್ ಹಾದಿ",
+    selectGender: "ಲಿಂಗ ಆಯ್ಕೆಮಾಡಿ",
+    male: "ಪುರುಷ",
+    female: "ಮಹಿಳೆ",
+    start: "ಪ್ರಾರಂಭಿಸಿ",
+    doctorSummary: "ಡಾಕ್ಟರ್ ವೀಕ್ಷಣೆ: ರೋಗಿ ವರದಿ",
+    close: "ಮುಚ್ಚಿ",
+    submit: "ಸಲ್ಲಿಸಿ",
+    next: "ಮುಂದೆ",
+    speak: "🔊 ಓದಿ",
+    mic: "🎤 ಮಾತನಾಡಿ",
+    summary: "ಸಾರಾಂಶ",
+    specialist: "ತಜ್ಞರು",
+    tests: "ಶಿಫಾರಸು ಮಾಡಿದ ಪರೀಕ್ಷೆಗಳು",
+    action: "ಟ್ರಯಾಜ್ ಸಲಹೆ",
+    followup: "ಅನುಸರಣೆ Q&A",
+    selectedBodyPart: "ದೇಹದ ಭಾಗ",
+    answer: "ಉತ್ತರ",
+    responses: "ಪ್ರತಿಕ್ರಿಯೆಗಳು",
+    startOver: "ಮತ್ತೆ ಪ್ರಾರಂಭಿಸಿ",
+    viewDoctorSummary: "ಡಾಕ್ಟರ್ ಸಾರಾಂಶ ನೋಡಿ",
+    timestamp: "ಸಮಯ",
+    wellnessTip: "ಆರೋಗ್ಯ ಸಲಹೆ",
+    pleaseAnswer: "ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರ ನೀಡಿ.",
+    viewAllSessions: "ಎಲ್ಲಾ ಸೆಷನ್ಸ್ ನೋಡಿ"
+  }
+};
 
-   function showCauses(part) {
-  selectedSymptoms = [...document.querySelectorAll('input[name="symptom"]:checked')].map(cb => cb.value);
-  const output = document.getElementById('output');
+const questionsPerZone = {
+  Head: {
+    en: [
+      "Do you have a headache?",
+      "Is there dizziness or blurred vision?",
+      "Do you feel nausea?"
+    ],
+    hi: [
+      "क्या आपको सिरदर्द है?",
+      "क्या चक्कर या धुंधली दृष्टि है?",
+      "क्या आपको मतली महसूस होती है?"
+    ],
+    kn: [
+      "ನಿಮಗೆ ತಲೆನೋವಿದೆಯೆ?",
+      "ಚಕ್ಕರಿಯೆ ಅಥವಾ ಮಂಕಾದ ದೃಷ್ಟಿಯಿದೆಯೆ?",
+      "ನಿಮಗೆ ವಾಂತಿಯಾಗುತ್ತಿದೆ ಎಂದು ಅನಿಸುತ್ತದೆವೆಯೆ?"
+    ]
+  },
+  Chest: {
+    en: [
+      "Do you feel chest pain?",
+      "Is there any shortness of breath?",
+      "Do you have cough or palpitations?"
+    ],
+    hi: [
+      "क्या आपको सीने में दर्द है?",
+      "क्या सांस लेने में तकलीफ है?",
+      "क्या खांसी या धड़कन तेज है?"
+    ],
+    kn: [
+      "ನಿಮಗೆ ಮೂನು ನೋವು ಉಂಟಾಗಿದೆಯೆ?",
+      "ಉಸಿರಾಟದಲ್ಲಿ ಏನಾದರೂ ತೊಂದರೆ ಇದೆಯೆ?",
+      "ನಿಮಗೆ ಕೆಮ್ಮು ಅಥವಾ ಹೃದಯದ ತೀವ್ರ ಧ್ವನಿ ಇದೆಯೆ?"
+    ]
+  },
+  Abdomen: {
+    en: [
+      "Do you have stomach pain?",
+      "Is there any bloating or vomiting?",
+      "Any change in bowel habits?"
+    ],
+    hi: [
+      "क्या आपको पेट दर्द है?",
+      "क्या फुलाव या उल्टी है?",
+      "क्या शौच की आदतों में बदलाव है?"
+    ],
+    kn: [
+      "ನಿಮಗೆ ಹೊಟ್ಟೆ ನೋವು ಇದೆಯೆ?",
+      "ಗುಬ್ಬುಗಾರಿಕೆ ಅಥವಾ ವಾಂತಿ ಇದೆಯೆ?",
+      "ಮಲದ ಅಭ್ಯಾಸದಲ್ಲಿ ಯಾವುದೇ ಬದಲಾವಣೆ ಇದೆಯೆ?"
+    ]
+  },
+  "Left Leg": {
+    en: [
+      "Is there pain or swelling in the left leg?",
+      "Do you feel numbness or tingling?",
+      "Is it difficult to walk?"
+    ],
+    hi: [
+      "क्या बाएँ पैर में दर्द या सूजन है?",
+      "क्या सुन्नपन या झनझनाहट है?",
+      "क्या चलने में दिक्कत है?"
+    ],
+    kn: [
+      "ಎಡ ಕಾಲು ನೋವು ಅಥವಾ ಉಬ್ಬು ಇದೆಯೆ?",
+      "ನಿಮಗೆ ಮುರಿವು ಅಥವಾ ಚುಮುಚುಮು ಇದೆಯೆ?",
+      "ನಡಿಗೆ ಕಷ್ಟವಾಗಿದೆಯೆ?"
+    ]
+  },
+  "Right Leg": {
+    en: [
+      "Is there pain or swelling in the right leg?",
+      "Do you feel numbness or tingling?",
+      "Is it difficult to walk?"
+    ],
+    hi: [
+      "क्या दाएँ पैर में दर्द या सूजन है?",
+      "क्या सुन्नपन या झनझनाहट है?",
+      "क्या चलने में दिक्कत है?"
+    ],
+    kn: [
+      "ಬಲ ಕಾಲು ನೋವು ಅಥವಾ ಉಬ್ಬು ಇದೆಯೆ?",
+      "ನಿಮಗೆ ಮುರಿವು ಅಥವಾ ಚುಮುಚುಮು ಇದೆಯೆ?",
+      "ನಡಿಗೆ ಕಷ್ಟವಾಗಿದೆಯೆ?"
+    ]
+  }
+};
 
-  if (selectedSymptoms.length === 0) {
-    output.innerHTML += `<p class="text-red-600 mt-2">Please select at least one symptom.</p>`;
+const rules = [
+  // Head
+  { part: "Head", answers: [true], specialist: "Neurologist", tests: ["MRI (if severe)"], action: {en:"Rest and monitor, consult if persists", hi:"आराम करें, बने रहने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಮುಂದುವರಿದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"} },
+  // Chest
+  { part: "Chest", answers: [true], specialist: "Cardiologist", tests: ["ECG"], action: {en:"Visit clinic soon", hi:"जल्दी डॉक्टर से मिलें", kn:"ಬೇಗ ವೈದ್ಯರನ್ನು ಭೇಟಿಯಾಗಿರಿ"} },
+  { part: "Chest", answers: [false, true], specialist: "Pulmonologist", tests: ["Chest X-ray"], action: {en:"Visit doctor soon", hi:"डॉक्टर से मिलें", kn:"ಬೇಗ ವೈದ್ಯರನ್ನು ಭೇಟಿಯಾಗಿರಿ"} },
+  // Abdomen
+  { part: "Abdomen", answers: [true], specialist: "Gastroenterologist", tests: ["Ultrasound"], action: {en:"Monitor diet, consult if severe", hi:"खानपान पर ध्यान दें, गंभीर होने पर डॉक्टर को दिखाएँ", kn:"ಆಹಾರವನ್ನು ಗಮನಿಸಿ, ಗಂಭೀರವಾಗಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"} },
+  // Legs
+  { part: "Left Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling", hi:"आराम करें, सूजन होने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಉಬ್ಬಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"} },
+  { part: "Right Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling", hi:"आराम करें, सूजन होने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಉಬ್ಬಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"} }
+];
+
+const wellnessTips = {
+  en: [
+    "Stay hydrated and rest as needed.",
+    "Monitor symptoms and seek help if worsening.",
+    "Eat healthy and avoid stress."
+  ],
+  hi: [
+    "पानी पिएं और आराम करें।",
+    "लक्षणों की निगरानी करें और बढ़ने पर डॉक्टर को दिखाएँ।",
+    "स्वस्थ आहार लें और तनाव से बचें।"
+  ],
+  kn: [
+    "ನೀರನ್ನು ಕುಡಿಯಿರಿ ಮತ್ತು ಅಗತ್ಯವಿದ್ದರೆ ವಿಶ್ರಾಂತಿ ಪಡೆಯಿರಿ.",
+    "ಲಕ್ಷಣಗಳನ್ನು ಗಮನಿಸಿ ಮತ್ತು ಹೆಚ್ಚು ಆಗುತ್ತಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+    "ಆರೋಗ್ಯಕರ ಆಹಾರ ಸೇವಿಸಿ ಮತ್ತು ಒತ್ತಡವನ್ನು ತಪ್ಪಿಸಿ."
+  ]
+};
+
+function setLanguage(lang) {
+  currentLang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.dataset.i18n;
+    if (translations[lang][key]) el.textContent = translations[lang][key];
+  });
+  // Also update popups if open
+  if (selectedZone && document.getElementById("qa-modal").classList.contains("block")) {
+    showQAModal(selectedZone);
+  }
+}
+
+function selectGender(gender) {
+  selectedGender = gender;
+  document.body.classList.remove("neutral-bg", "male-bg", "female-bg");
+  if (gender === "male") {
+    document.body.classList.add("male-bg");
+    document.getElementById("body-image").src = "https://i.postimg.cc/c4SPF0Gj/IMG-20250613-WA0005.jpg";
+  } else {
+    document.body.classList.add("female-bg");
+    document.getElementById("body-image").src = "https://i.postimg.cc/hjBgqx78/24469993-realistic-front-muscles-of-woman-isolated-in-white-background.jpg";
+  }
+  document.getElementById("gender-selection").classList.add("hidden");
+  document.getElementById("body-section").classList.remove("hidden");
+}
+
+function zoneClicked(zone, e) {
+  selectedZone = zone;
+  showQAModal(zone);
+}
+
+function showQAModal(zone) {
+  const qList = questionsPerZone[zone][currentLang];
+  let html = "";
+  qList.forEach((q, i) => {
+    html += `
+      <div class="mb-3">
+        <span>${q}</span>
+        <button class="mic-btn ml-2" onclick="speakQuestion('${q.replace(/'/g, "\\'")}', this)" title="Speak">${translations[currentLang].speak}</button>
+        <button class="mic-btn ml-1" onclick="voiceToText('${zone}',${i}, this)" id="micbtn${i}" title="Voice">${translations[currentLang].mic}</button>
+        <input type="text" id="ans${i}" class="mt-2 w-full p-2 rounded bg-gray-800 text-white" />
+      </div>
+    `;
+  });
+  html += `<button onclick="submitQA('${zone}')" class="bg-green-500 px-4 py-2 mt-2 rounded">${translations[currentLang].submit}</button>`;
+  document.getElementById("qa-title").innerText = (translations[currentLang][zone] || zone);
+  document.getElementById("qa-questions").innerHTML = html;
+  document.getElementById("qa-modal").classList.remove("hidden");
+  document.getElementById("qa-modal").classList.add("block");
+}
+function closeQAModal() {
+  document.getElementById("qa-modal").classList.add("hidden");
+  document.getElementById("qa-modal").classList.remove("block");
+}
+
+// Text-to-speech
+function speakQuestion(text, btn) {
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = currentLang === 'hi' ? 'hi-IN' : currentLang === 'kn' ? 'kn-IN' : 'en-US';
+  speechSynthesis.speak(utter);
+  btn.classList.add('active');
+  setTimeout(()=>btn.classList.remove('active'), 1500);
+}
+
+// Voice to text (SpeechRecognition)
+function voiceToText(zone, i, btn) {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    alert("Sorry, your browser does not support Speech Recognition.");
     return;
   }
-
-  const causes = {
-    "Headache": ["Migraine", "Tension headache", "Dehydration"],
-    "Dizziness": ["Low BP", "Inner ear issue", "Vertigo"],
-    "Blurred Vision": ["Fatigue", "High BP", "Sugar"],
-    "Chest Pain": ["Heart disease", "Muscle strain", "Acidity"],
-    "Cough": ["Cold", "Allergy", "Asthma"],
-    "Stomach Pain": ["Constipation", "Acidity", "Digestive issues"],
-    "Swelling": ["Allergy", "Organ inflammation", "Fluid retention"]
+  btn.classList.add('active');
+  let rec = window.SpeechRecognition ? new SpeechRecognition() : new webkitSpeechRecognition();
+  rec.lang = currentLang === 'hi' ? 'hi-IN' : currentLang === 'kn' ? 'kn-IN' : 'en-US';
+  rec.start();
+  rec.onresult = function(ev) {
+    document.getElementById('ans'+i).value = ev.results[0][0].transcript;
+    btn.classList.remove('active');
   };
+  rec.onerror = function(ev) {
+    btn.classList.remove('active');
+    alert("Could not understand. Try again.");
+  };
+}
 
-  let resultSet = new Set();
-  selectedSymptoms.forEach(sym => {
-    (causes[sym] || ["No known causes"]).forEach(c => resultSet.add(c));
+// QA submission and recommendation logic
+function submitQA(zone) {
+  const qList = questionsPerZone[zone][currentLang];
+  let ansArr = [];
+  for (let i=0; i<qList.length; ++i) {
+    const val = document.getElementById("ans"+i).value.trim();
+    ansArr.push(val);
+  }
+  if (ansArr.some(v=>!v)) {
+    alert(translations[currentLang].pleaseAnswer);
+    return;
+  }
+  answers[zone] = ansArr;
+  closeQAModal();
+  // Recommendation logic: simplified (yes/no/contains "pain" etc.)
+  let normalized = ansArr.map(a=>/yes|हाँ|ಹೌದು|ಹೌದು|ಹಾದು|ಹೌದು|ಹೌದು|pain|दर्द|ನೋವು|ಹೌದು|ಹೌದು|ಹೌದು|pain|दर्द|ನೋವು|ಹೌದು|pain|दर्द|ನೋವು|ಹೌದು|pain|ದर्द|ನೋವು|pain|ದर्द|ನೋವು|pain|दर्द|ನೋವು|pain|दर्द|ನೋವು|pain|दर्द|ನೋವು/gi.test(a.trim().toLowerCase()));
+  let rec = rules.find(r => r.part === zone && normalized.some(v=>v));
+  if (!rec) rec = {
+    specialist:"General Physician",
+    tests:["Basic Checkup"],
+    action:{
+      en:"Monitor and consult if needed",
+      hi:"निगरानी करें, ज़रूरत हो तो डॉक्टर से मिलें",
+      kn:"ಗಮನಿಸಿ, ಅಗತ್ಯವಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"
+    }
+  };
+  // Output
+  sessionId = Date.now();
+  saveSession({
+    id: sessionId,
+    gender: selectedGender,
+    zone: selectedZone,
+    answers: answers[selectedZone],
+    lang: currentLang,
+    timestamp: new Date().toISOString()
   });
-
-  const causeList = [...resultSet].map(c => `<li>${c}</li>`).join('');
-  output.innerHTML += `
-    <div class="mt-4">
-      <strong>Possible Causes based on selected symptoms:</strong>
-      <ul class="list-disc list-inside mt-2 text-left inline-block">${causeList}</ul>
+  let out = `
+    <div class="mx-auto max-w-xl bg-gray-900/90 border border-green-700 rounded-xl p-6 mt-6 text-left">
+      <h2 class="text-2xl font-extrabold mb-2 text-green-400">${translations[currentLang].summary}</h2>
+      <div class="mb-2"><strong>${translations[currentLang].selectedBodyPart}:</strong> ${zone}</div>
+      <div class="mb-2"><strong>${translations[currentLang].responses}:</strong>
+        <ul class="list-disc pl-6">${qList.map((q,i)=>`<li>${q} <span class="text-green-300">→</span> <span>${ansArr[i]}</span></li>`).join('')}</ul>
+      </div>
+      <div class="mb-2"><strong>${translations[currentLang].specialist}:</strong> ${rec.specialist}</div>
+      <div class="mb-2"><strong>${translations[currentLang].tests}:</strong> ${rec.tests.join(', ')}</div>
+      <div class="mb-2"><strong>${translations[currentLang].action}:</strong> ${rec.action[currentLang]}</div>
+      <div class="mb-3 bg-green-800/80 px-3 py-2 rounded">${translations[currentLang].wellnessTip}: ${wellnessTips[currentLang][Math.floor(Math.random()*wellnessTips[currentLang].length)]}</div>
+      <button onclick="showDoctorSummary()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 mt-2 rounded">${translations[currentLang].viewDoctorSummary}</button>
+      <button onclick="showAllSessions()" class="bg-yellow-500 text-white px-3 py-1 rounded mt-3">${translations[currentLang].viewAllSessions}</button>
+      <button onclick="window.location.reload()" class="bg-red-500 hover:bg-red-600 ml-3 text-white px-4 py-2 rounded">${translations[currentLang].startOver}</button>
     </div>
   `;
+  document.getElementById("output").innerHTML = out;
 }
 
-    function showFollowupQuestions(zone) {
-      const box = document.getElementById("followup-questions");
-      box.innerHTML = "";
-      followupAnswers = [];
-      const questions = followupBank[zone] || [];
+// -- Session Storage and Dashboard --
+function saveSession(session) {
+  let allSessions = JSON.parse(localStorage.getItem('symptomSessions') || '[]');
+  allSessions.push(session);
+  localStorage.setItem('symptomSessions', JSON.stringify(allSessions));
+}
 
-      questions.forEach((q, i) => {
-        const div = document.createElement("div");
-        div.innerHTML = `
-          <p>${q}</p>
-          <select onchange="saveFollowup(${i}, this.value)" class="border rounded px-2 py-1">
-            <option value="">Select</option>
-            <option>Yes</option>
-            <option>No</option>
-          </select>
-        `;
-        box.appendChild(div);
-      });
+function showAllSessions() {
+  const sessions = JSON.parse(localStorage.getItem('symptomSessions') || '[]');
+  let html = "";
+  if (sessions.length === 0) html += "<p>No sessions yet.</p>";
+  else {
+    html += `<table class="w-full text-left text-sm"><tr><th>Time</th><th>Body Part</th><th>Gender</th><th>Actions</th></tr>`;
+    sessions.slice().reverse().forEach(s => {
+      html += `<tr>
+        <td>${new Date(s.timestamp).toLocaleString()}</td>
+        <td>${s.zone}</td>
+        <td>${s.gender}</td>
+        <td><button onclick="viewSessionDetail(${s.id})" class="bg-blue-500 px-2 rounded text-white">View</button></td>
+      </tr>`;
+    });
+    html += `</table>`;
+  }
+  document.getElementById("sessions-list").innerHTML = html;
+  document.getElementById("sessions-modal").classList.remove("hidden");
+}
 
-      document.getElementById("followup-section").classList.remove("hidden");
+function closeAllSessions() {
+  document.getElementById("sessions-modal").classList.add("hidden");
+}
+
+function viewSessionDetail(id) {
+  const sessions = JSON.parse(localStorage.getItem('symptomSessions') || '[]');
+  const s = sessions.find(x => x.id === id);
+  if (!s) return;
+  let qList = questionsPerZone[s.zone] ? questionsPerZone[s.zone][s.lang] : [];
+  let html = `<div class="bg-gray-800 p-4 rounded-lg max-w-xl mx-auto">
+    <h2 class="text-lg mb-2">Session Detail</h2>
+    <div><b>Time:</b> ${new Date(s.timestamp).toLocaleString()}</div>
+    <div><b>Gender:</b> ${s.gender}</div>
+    <div><b>Body Part:</b> ${s.zone}</div>
+    <div><b>Answers:</b> <ul class="list-disc ml-6">${(s.answers||[]).map((a,i)=>`<li>${qList[i]||''}: ${a}</li>`).join('')}</ul></div>
+    <button onclick="showAllSessions()" class="mt-2 bg-blue-500 px-4 py-1 rounded text-white">Back</button>
+    <button onclick="closeAllSessions()" class="mt-2 ml-2 bg-red-500 px-4 py-1 rounded text-white">Close</button>
+  </div>`;
+  document.getElementById("sessions-list").innerHTML = html;
+}
+
+function showDoctorSummary() {
+  // Compose summary for doctor
+  let content = `
+    <div><strong>${translations[currentLang].timestamp}:</strong> ${new Date(sessionId).toLocaleString()}</div>
+    <div><strong>${translations[currentLang].selectedBodyPart}:</strong> ${selectedZone}</div>
+    <div><strong>Gender:</strong> ${selectedGender}</div>
+    <div><strong>${translations[currentLang].followup}:</strong><ul class="list-disc ml-6">${questionsPerZone[selectedZone][currentLang].map((q,i)=>`<li>${q}: <span class="text-blue-300">${answers[selectedZone][i]}</span></li>`).join('')}</ul></div>
+  `;
+  let rec = rules.find(r => r.part === selectedZone && answers[selectedZone].some(a=>/yes|हाँ|ಹೌದು|pain|दर्द|ನೋವು/i.test(a)));
+  if (!rec) rec = {
+    specialist:"General Physician",
+    tests:["Basic Checkup"],
+    action:{
+      en:"Monitor and consult if needed",
+      hi:"निगरानी करें, ज़रूरत हो तो डॉक्टर से मिलें",
+      kn:"ಗಮನಿಸಿ, ಅಗತ್ಯವಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"
     }
-
-    function saveFollowup(index, value) {
-      followupAnswers[index] = {
-        question: followupBank[selectedZone][index],
-        answer: value
-      };
-    }
-
-   function submitFollowup() {
-  const selectedSymptoms = [...document.querySelectorAll('input[name="symptom"]:checked')].map(cb => cb.value);
-
-  const finalData = {
-    part: selectedZone,
-    symptoms: selectedSymptoms,
-    answers: followupAnswers
   };
-
-  console.log("🧠 Structured Data:", finalData);
-
-  const output = document.getElementById('output');
-  output.innerHTML = `
-    <div class="mt-6 p-4 bg-white rounded shadow max-w-lg mx-auto text-left">
-      <h2 class="text-xl font-semibold mb-2">📝 Summary</h2>
-      <p><strong>Selected Body Part:</strong> ${finalData.part}</p>
-      <p><strong>Symptoms Selected:</strong> ${finalData.symptoms.join(', ')}</p>
-      <p><strong>Follow-up Answers:</strong></p>
-      <ul class="list-disc list-inside">
-        ${finalData.answers.map(ans => `<li>${ans.answer}</li>`).join('')}
-      </ul>
-
-      <p class="mt-4"><strong>Structured JSON Data:</strong></p>
-      <pre class="bg-gray-100 p-2 rounded text-sm overflow-auto">
-${JSON.stringify(finalData, null, 2)}
-      </pre>
-
-      <button onclick="window.location.reload()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Start Over</button>
-    </div>
+  content += `
+    <div class="mt-2"><strong>${translations[currentLang].specialist}:</strong> ${rec.specialist}</div>
+    <div><strong>${translations[currentLang].tests}:</strong> ${rec.tests.join(', ')}</div>
+    <div><strong>${translations[currentLang].action}:</strong> ${rec.action[currentLang]}</div>
   `;
-
-  // ⬇️ Get doctor recommendations
-  const { specialists, tests, actions } = analyzeSymptoms();
-
-const viewBtn = document.createElement("button");
-viewBtn.textContent = "View Doctor Summary";
-viewBtn.className = "mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-all";
-viewBtn.onclick = function () {
-  showDoctorSummary(finalData, specialists, tests, actions);
-};
-output.appendChild(viewBtn);
-}
-  
-function showDoctorSummary(finalData, specialistList, testList, actionList) {
-  const summaryBox = document.getElementById("summary-content");
-  const docView = document.getElementById("doctor-summary");
-
-  summaryBox.innerHTML = `
-    <p><strong>🕒 Timestamp:</strong> ${new Date().toLocaleString()}</p>
-    <p><strong>🧍‍♂️ Selected Body Part:</strong> ${finalData.part}</p>
-    <p><strong>🩹 Symptoms:</strong> ${finalData.symptoms.join(', ') || 'None'}</p>
-    <p><strong>📋 Follow-up Q&A:</strong></p>
-    <ul class="list-disc ml-4">
-      ${finalData.answers.map(a => `<li>${a.question} - <em>${a.answer}</em></li>`).join('')}
-    </ul>
-    <p><strong>👨‍⚕️ Suggested Specialists:</strong> ${specialistList.join(', ') || 'N/A'}</p>
-    <p><strong>🧪 Recommended Tests:</strong> ${testList.join(', ') || 'N/A'}</p>
-    <p><strong>💡 Advice:</strong></p>
-    <ul class="list-disc ml-4">
-      ${actionList.map(a => `<li>${a}</li>`).join('')}
-    </ul>
-  `;
-
-  docView.classList.remove("hidden");
+  document.getElementById("summary-content").innerHTML = content;
+  document.getElementById("doctor-summary").classList.remove("hidden");
 }
 function closeDoctorSummary() {
   document.getElementById("doctor-summary").classList.add("hidden");
 }
-function analyzeSymptoms() {
-   const specialistSet = new Set();
-  const testSet = new Set();
-  const actions = [];
 
-  const recommendationRules = {
-    "Headache": {
-      specialist: "Neurologist",
-      tests: ["MRI", "Hydration Check"],
-      action: "Rest in dark room. If persistent, consult Neurologist."
-    },
-    "Dizziness": {
-      specialist: "General Physician",
-      tests: ["BP Check", "Sugar Levels"],
-      action: "Hydrate and rest. Visit doctor if it continues."
-    },
-    "Blurred Vision": {
-      specialist: "Ophthalmologist",
-      tests: ["Eye Test", "Sugar Test"],
-      action: "Avoid screen time. Schedule an eye checkup."
-    },
-    "Nausea": {
-      specialist: "Gastroenterologist",
-      tests: ["Stool Test"],
-      action: "Take ORS. If frequent, see a doctor."
-    },
-    "Chest Pain": {
-      specialist: "Cardiologist",
-      tests: ["ECG", "Chest X-Ray"],
-      action: "Seek medical attention immediately."
-    },
-    "Shortness of Breath": {
-      specialist: "Pulmonologist",
-      tests: ["Chest X-Ray", "Pulse Oxymeter"],
-      action: "Sit upright. If severe, go to ER."
-    },
-    "Palpitations": {
-      specialist: "Cardiologist",
-      tests: ["ECG", "Blood Pressure"],
-      action: "Reduce caffeine. Monitor heart rate."
-    },
-    "Swelling": {
-      specialist: "Orthopedic",
-      tests: ["X-Ray", "Blood Test"],
-      action: "Apply ice. Visit doctor if swelling increases."
-    },
-    "Stomach Pain": {
-      specialist: "Gastroenterologist",
-      tests: ["Ultrasound", "Stool Test"],
-      action: "Avoid spicy food. See doctor if pain is severe."
-    }
-  };
-
- selectedSymptoms.forEach(symptom => {
-    const rule = recommendationRules[symptom];
-    if (rule) {
-      specialistSet.add(rule.specialist);
-      rule.tests.forEach(t => testSet.add(t));
-      actions.push(rule.action);
-    }
-  });
-
-  return {
-    specialists: [...specialistSet],
-    tests: [...testSet],
-    actions
-  };
-}
-
- 
-  </script>
-  <!-- Doctor Summary Modal -->
-<div id="doctor-summary" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white p-6 rounded-lg w-full max-w-xl shadow-lg">
-    <h2 class="text-2xl font-bold mb-4">🩺 Doctor View: Patient Summary</h2>
-    <div id="summary-content" class="text-left text-sm space-y-2"></div>
-    <button onclick="closeDoctorSummary()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Close</button>
-  </div>
-</div>
-  </body>
+document.addEventListener("DOMContentLoaded", updateUIText);
+function updateUIText() { setLanguage(currentLang); }
+</script>
+</body>
 </html>
