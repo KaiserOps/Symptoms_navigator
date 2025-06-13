@@ -1,24 +1,66 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Symptom Navigator</title>
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .click-zone {
+      position: absolute;
+      cursor: pointer;
+      background-color: rgba(0, 255, 0, 0.2);
+    }
+  </style>
 </head>
-<body>
+<body class="bg-green-50 text-gray-800 font-sans min-h-screen">
+  <!-- Header -->
+  <header class="bg-green-100 text-center py-4 shadow">
+    <h1 class="text-2xl font-bold">🩺 Symptom Navigator</h1>
+  </header>
 
-  <h1>Symptom Navigator</h1>
-
-  <div id="gender-select">
-    <button onclick="selectGender('male')">Male</button>
-    <button onclick="selectGender('female')">Female</button>
+  <!-- Gender Selection -->
+  <div id="gender-selection" class="text-center py-6">
+    <h2 class="text-lg font-semibold mb-4">Select Gender</h2>
+    <button onclick="selectGender('male')" class="bg-green-500 text-white px-4 py-2 rounded-full mx-2">Male</button>
+    <button onclick="selectGender('female')" class="bg-green-500 text-white px-4 py-2 rounded-full mx-2">Female</button>
   </div>
 
-  <div id="body-container" style="display: none;">
-    <img id="body-image" src="" alt="Human Body" width="300">
+  <!-- Image Display and Click Zones -->
+  <div id="body-section" class="relative flex justify-center hidden">
+    <img id="body-image" src="" alt="Body Model" class="max-w-xs" />
+
+    <!-- Clickable zones -->
+    <div class="click-zone" style="top: 10%; left: 40%; width: 20%; height: 10%;" onclick="zoneClicked('Head')"></div>
+    <div class="click-zone" style="top: 20%; left: 40%; width: 20%; height: 10%;" onclick="zoneClicked('Chest')"></div>
+    <div class="click-zone" style="top: 35%; left: 40%; width: 20%; height: 15%;" onclick="zoneClicked('Abdomen')"></div>
+    <div class="click-zone" style="top: 55%; left: 25%; width: 15%; height: 20%;" onclick="zoneClicked('Left Hand')"></div>
+    <div class="click-zone" style="top: 55%; left: 60%; width: 15%; height: 20%;" onclick="zoneClicked('Right Hand')"></div>
+    <div class="click-zone" style="top: 80%; left: 35%; width: 12%; height: 15%;" onclick="zoneClicked('Left Leg')"></div>
+    <div class="click-zone" style="top: 80%; left: 52%; width: 12%; height: 15%;" onclick="zoneClicked('Right Leg')"></div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Output -->
+  <div id="output" class="text-center mt-6 text-lg font-medium"></div>
+
+  <script>
+    function selectGender(gender) {
+      const imageElement = document.getElementById('body-image');
+      const section = document.getElementById('body-section');
+      const genderSection = document.getElementById('gender-selection');
+      if (gender === 'male') {
+        imageElement.src = 'https://i.postimg.cc/c4SPF0Gj/IMG-20250613-WA0005.jpg'; // Replace with your actual male image path
+      } else {
+        imageElement.src = 'https://i.postimg.cc/hjBgqx78/24469993-realistic-front-muscles-of-woman-isolated-in-white-background.jpg'; // Replace with your actual female image path
+      }
+      genderSection.classList.add('hidden');
+      section.classList.remove('hidden');
+    }
+
+    function zoneClicked(part) {
+      const output = document.getElementById('output');
+      output.innerHTML = `🩺 <strong>${part}</strong> selected.<br>Loading symptoms...`;
+    }
+  </script>
 </body>
 </html>
