@@ -155,7 +155,7 @@
       };
     }
 
-    function submitFollowup() {
+   function submitFollowup() {
   const selectedSymptoms = [...document.querySelectorAll('input[name="symptom"]:checked')].map(cb => cb.value);
 
   const finalData = {
@@ -184,12 +184,47 @@ ${JSON.stringify(finalData, null, 2)}
 
       <button onclick="window.location.reload()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Start Over</button>
     </div>
-  ` 
+  `;
 
-  analyzeSymptoms();
+  // ⬇️ Get doctor recommendations
+  const { specialists, tests, actions } = analyzeSymptoms();
+
+const viewBtn = document.createElement("button");
+viewBtn.textContent = "View Doctor Summary";
+viewBtn.className = "mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-all";
+viewBtn.onclick = function () {
+  showDoctorSummary(finalData, specialists, tests, actions);
+};
+output.appendChild(viewBtn);
+}
+  
+function showDoctorSummary(finalData, specialistList, testList, actionList) {
+  const summaryBox = document.getElementById("summary-content");
+  const docView = document.getElementById("doctor-summary");
+
+  summaryBox.innerHTML = `
+    <p><strong>🕒 Timestamp:</strong> ${new Date().toLocaleString()}</p>
+    <p><strong>🧍‍♂️ Selected Body Part:</strong> ${finalData.part}</p>
+    <p><strong>🩹 Symptoms:</strong> ${finalData.symptoms.join(', ') || 'None'}</p>
+    <p><strong>📋 Follow-up Q&A:</strong></p>
+    <ul class="list-disc ml-4">
+      ${finalData.answers.map(a => `<li>${a.question} - <em>${a.answer}</em></li>`).join('')}
+    </ul>
+    <p><strong>👨‍⚕️ Suggested Specialists:</strong> ${specialistList.join(', ') || 'N/A'}</p>
+    <p><strong>🧪 Recommended Tests:</strong> ${testList.join(', ') || 'N/A'}</p>
+    <p><strong>💡 Advice:</strong></p>
+    <ul class="list-disc ml-4">
+      ${actionList.map(a => `<li>${a}</li>`).join('')}
+    </ul>
+  `;
+
+  docView.classList.remove("hidden");
+}
+function closeDoctorSummary() {
+  document.getElementById("doctor-summary").classList.add("hidden");
 }
 function analyzeSymptoms() {
-  const specialistSet = new Set();
+   const specialistSet = new Set();
   const testSet = new Set();
   const actions = [];
 
@@ -241,7 +276,7 @@ function analyzeSymptoms() {
     }
   };
 
-  selectedSymptoms.forEach(symptom => {
+ selectedSymptoms.forEach(symptom => {
     const rule = recommendationRules[symptom];
     if (rule) {
       specialistSet.add(rule.specialist);
@@ -250,18 +285,22 @@ function analyzeSymptoms() {
     }
   });
 
-  const output = document.getElementById("output");
-  output.innerHTML += `
-    <div class="mt-6 p-4 bg-white rounded shadow max-w-lg mx-auto text-left">
-      <h2 class="text-xl font-semibold mb-2">🩺 Recommendations</h2>
-      <p><strong>Specialist(s) to consult:</strong> ${[...specialistSet].join(', ') || "N/A"}</p>
-      <p><strong>Suggested Tests:</strong> ${[...testSet].join(', ') || "N/A"}</p>
-      <p><strong>Advice:</strong></p>
-      <ul class="list-disc list-inside">
-        ${actions.map(a => `<li>${a}</li>`).join('') || "<li>No specific advice available.</li>"}
-      </ul>
-    </div>
-  `;
+  return {
+    specialists: [...specialistSet],
+    tests: [...testSet],
+    actions
+  };
 }
-  </script></body>
+
+ 
+  </script>
+  <!-- Doctor Summary Modal -->
+<div id="doctor-summary" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-lg w-full max-w-xl shadow-lg">
+    <h2 class="text-2xl font-bold mb-4">🩺 Doctor View: Patient Summary</h2>
+    <div id="summary-content" class="text-left text-sm space-y-2"></div>
+    <button onclick="closeDoctorSummary()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Close</button>
+  </div>
+</div>
+  </body>
 </html>
