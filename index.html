@@ -171,8 +171,8 @@ const translations = {
     deleteAll: "Delete All Data",
     delete: "Delete",
     shareQR: "Share via QR"
-  },
-  // ... (repeat for hi and kn if needed)
+  }
+  // Add hi and kn translations as needed!
 };
 
 const questionsPerZone = {
@@ -298,6 +298,7 @@ function showQAModal(zone) {
     html += `
       <div class="mb-3">
         <span>${q}</span>
+        <button class="ml-2 bg-blue-700 px-2 py-1 rounded text-white" onclick="speakQuestion('${q.replace(/'/g, '\\\'')}')">🔊</button>
         <input type="text" id="ans${i}" class="mt-2 w-full p-2 rounded bg-gray-800 text-white" />
       </div>
     `;
@@ -306,11 +307,20 @@ function showQAModal(zone) {
   document.getElementById("qa-title").innerText = (translations[currentLang][zone] || zone);
   document.getElementById("qa-questions").innerHTML = html;
   document.getElementById("qa-modal").classList.remove("hidden");
-  document.getElementById("qa-modal").classList.add("block");
 }
+
+function speakQuestion(text) {
+  if (!window.speechSynthesis) {
+    alert("Speech synthesis not supported in your browser.");
+    return;
+  }
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = currentLang === 'hi' ? 'hi-IN' : currentLang === 'kn' ? 'kn-IN' : 'en-US';
+  speechSynthesis.speak(utter);
+}
+
 function closeQAModal() {
   document.getElementById("qa-modal").classList.add("hidden");
-  document.getElementById("qa-modal").classList.remove("block");
 }
 
 function isEmergency(zone, ansArr) {
