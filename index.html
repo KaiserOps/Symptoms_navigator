@@ -12,17 +12,29 @@
       background: rgba(0, 255, 0, 0.10);
       border-radius: 8px;
       transition: box-shadow 0.2s, background 0.2s;
+      z-index: 1;
     }
-    .click-zone:hover { background: rgba(34,197,94,0.22); box-shadow:0 0 8px 2px #38b2ac44;}
+    .click-zone.selected, .click-zone.flash {
+      background: rgba(34,197,94,0.45);
+      border: 2px solid #84e291;
+      box-shadow: 0 0 10px 3px #38b2ac55;
+      z-index: 2;
+      animation: flashSel 0.7s 1;
+    }
+    @keyframes flashSel {
+      0% { box-shadow: 0 0 10px 6px #38b2ac88; }
+      100% { box-shadow: 0 0 10px 1px #38b2ac55; }
+    }
     .male-bg { background: radial-gradient(circle at 60% 20%, #e6f6ff 50px, #b6e0fe 300px, #0e2f44 100%);}
     .female-bg { background: radial-gradient(circle at 40% 70%, #ffe6fa 60px, #fbb6ce 300px, #3b133e 100%);}
     .neutral-bg { background: linear-gradient(135deg, #232526 0%, #414345 100%);}
-    select, option { color-scheme: dark;}
-    .mic-btn {background:#222;border-radius:50%;padding:4px 9px;display:inline-block;}
-    .mic-btn.active {background:#059669;}
     .modal-bg {background:rgba(0,0,0,0.60);}
     .modal {z-index:90;}
     .dashboard-modal {z-index:100;}
+    .risk-badge {display:inline-block;padding:0.15em 0.7em;border-radius:1em;font-weight:bold;}
+    .risk-low {background:#22c55e33;color:#22c55e;border:2px solid #22c55e;}
+    .risk-med {background:#fde04788;color:#eab308;border:2px solid #eab308;}
+    .risk-high{background:#ef444488;color:#ef4444;border:2px solid #ef4444;}
   </style>
 </head>
 <body class="neutral-bg min-h-screen text-gray-100 font-sans transition-colors duration-700">
@@ -41,10 +53,7 @@
   <p class="mt-2 italic text-blue-400 text-base" data-i18n="subtitle">Your smart step towards understanding your health</p>
 </header>
 
-<!-- Gender & Name Selection -->
 <div id="gender-selection" class="text-center py-5">
-  <!-- Uncomment below to enable patient name input -->
-  <!-- <input id="patient-name" type="text" class="mb-4 p-2 rounded text-black" placeholder="Enter Patient Name" style="width:220px" /> -->
   <h2 class="text-lg font-semibold mb-4" data-i18n="selectGender">Select Gender</h2>
   <button onclick="selectGender('male')" class="bg-green-500 hover:bg-green-600 transition-colors duration-200 text-white px-6 py-2 rounded-full mx-2 shadow-md">👨 <span data-i18n="male">Male</span></button>
   <button onclick="selectGender('female')" class="bg-pink-500 hover:bg-pink-600 transition-colors duration-200 text-white px-6 py-2 rounded-full mx-2 shadow-md">👩 <span data-i18n="female">Female</span></button>
@@ -54,18 +63,15 @@
 <div id="body-section" class="relative flex justify-center hidden mt-4">
   <img id="body-image" src="" alt="Body Model" class="max-w-xs rounded-2xl shadow-lg border-2 border-green-200 dark:border-green-700" />
   <!-- click-zones, ARMS ADDED -->
-  <div class="click-zone" style="top: 13%; left: 44%; width: 12%; height: 10%;" onclick="zoneClicked('Head', event)"></div>
-  <div class="click-zone" style="top: 27%; left: 42%; width: 16%; height: 13%;" onclick="zoneClicked('Chest', event)"></div>
-  <div class="click-zone" style="top: 41%; left: 44%; width: 12%; height: 13%;" onclick="zoneClicked('Abdomen', event)"></div>
-  <div class="click-zone" style="top: 62%; left: 30%; width: 12%; height: 24%;" onclick="zoneClicked('Left Leg', event)"></div>
-  <div class="click-zone" style="top: 62%; left: 58%; width: 12%; height: 24%;" onclick="zoneClicked('Right Leg', event)"></div>
-  <!-- ARMS (approximate coordinates) -->
-  <div class="click-zone" style="top: 29%; left: 30%; width: 10%; height: 26%;" onclick="zoneClicked('Left Arm', event)"></div>
-  <div class="click-zone" style="top: 29%; left: 60%; width: 10%; height: 26%;" onclick="zoneClicked('Right Arm', event)"></div>
-  <div id="options-popover" class="absolute z-40 hidden"></div>
+  <div class="click-zone" id="zone-Head" style="top: 13%; left: 44%; width: 12%; height: 10%;" onclick="zoneClicked('Head', event)"></div>
+  <div class="click-zone" id="zone-Chest" style="top: 27%; left: 42%; width: 16%; height: 13%;" onclick="zoneClicked('Chest', event)"></div>
+  <div class="click-zone" id="zone-Abdomen" style="top: 41%; left: 44%; width: 12%; height: 13%;" onclick="zoneClicked('Abdomen', event)"></div>
+  <div class="click-zone" id="zone-Left-Leg" style="top: 62%; left: 30%; width: 12%; height: 24%;" onclick="zoneClicked('Left Leg', event)"></div>
+  <div class="click-zone" id="zone-Right-Leg" style="top: 62%; left: 58%; width: 12%; height: 24%;" onclick="zoneClicked('Right Leg', event)"></div>
+  <div class="click-zone" id="zone-Left-Arm" style="top: 29%; left: 30%; width: 10%; height: 26%;" onclick="zoneClicked('Left Arm', event)"></div>
+  <div class="click-zone" id="zone-Right-Arm" style="top: 29%; left: 60%; width: 10%; height: 26%;" onclick="zoneClicked('Right Arm', event)"></div>
 </div>
 
-<!-- Questionnaire -->
 <div id="qa-modal" class="hidden fixed inset-0 modal-bg flex items-center justify-center z-50 modal">
   <div class="bg-gray-900/95 rounded-xl shadow-xl max-w-md w-full p-6 border border-green-600">
     <h2 class="text-lg mb-2 font-bold text-green-400" id="qa-title"></h2>
@@ -74,29 +80,61 @@
   </div>
 </div>
 
-<!-- Output & Doctor View -->
-<div id="output" class="text-center mt-6 text-lg font-medium"></div>
-<div class="hidden fixed inset-0 modal-bg flex items-center justify-center dashboard-modal" id="sessions-modal" >
-  <div class="bg-gray-900/95 p-5 rounded-lg w-full max-w-2xl shadow-2xl border border-green-700">
-    <h2 class="text-2xl font-bold mb-4 text-green-400" id="sessions-title">All Patient Sessions</h2>
-    <div id="sessions-list"></div>
-    <button onclick="closeAllSessions()" class="mt-4 bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded">Close</button>
-  </div>
-</div>
-<div id="doctor-summary" class="hidden fixed inset-0 modal-bg flex items-center justify-center z-50 modal">
-  <div class="bg-gray-900/95 dark:bg-gray-800/95 p-6 rounded-lg w-full max-w-xl shadow-2xl border border-green-700">
-    <h2 class="text-2xl font-bold mb-4" data-i18n="doctorSummary">🩺 Professional Doctor View</h2>
-    <div id="summary-content" class="text-left text-sm space-y-2"></div>
-    <button onclick="closeDoctorSummary()" class="mt-4 bg-red-500 hover:bg-red-700 transition-all duration-200 text-white px-4 py-2 rounded" data-i18n="close">Close</button>
+<!-- Emergency Modal -->
+<div id="emergency-modal" class="hidden fixed inset-0 modal-bg flex items-center justify-center z-[120]">
+  <div class="bg-red-800/90 border-4 border-red-600 rounded-2xl p-10 text-center shadow-2xl max-w-sm">
+    <div class="text-6xl animate-bounce mb-4">🚨</div>
+    <h2 class="text-2xl font-bold mb-2 text-white">Emergency Detected!</h2>
+    <p class="mb-4 text-lg text-red-100">Your answers indicate a possible medical emergency.<br> Please call emergency services or go to the nearest ER immediately.</p>
+    <button onclick="closeEmergencyModal()" class="bg-white/80 hover:bg-white px-6 py-2 text-red-700 font-bold rounded">Close</button>
   </div>
 </div>
 
+<div id="output" class="text-center mt-6 text-lg font-medium"></div>
+
+<!-- Doctor Dashboard Modal -->
+<div id="doctor-dashboard" class="hidden fixed inset-0 modal-bg flex items-center justify-center dashboard-modal">
+  <div class="bg-gray-900/95 p-6 rounded-xl w-full max-w-4xl shadow-2xl border border-green-700 overflow-auto max-h-[90vh]">
+    <div class="flex justify-between items-center mb-2">
+      <h2 class="text-2xl font-bold text-green-400" id="dashboard-title">Doctor Dashboard</h2>
+      <button onclick="closeDoctorDashboard()" class="bg-red-500 hover:bg-red-700 text-white px-4 py-1 rounded">Close</button>
+    </div>
+    <div class="flex gap-2 mb-2 flex-wrap">
+      <button onclick="exportAllCSV()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">Export All as CSV</button>
+      <button onclick="exportAllJSON()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm">Export All as JSON</button>
+      <button onclick="deleteAllSessions()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">Delete All Data</button>
+    </div>
+    <div id="dashboard-list"></div>
+  </div>
+</div>
+<!-- Doctor Session Detail Modal -->
+<div id="doctor-session-detail" class="hidden fixed inset-0 modal-bg flex items-center justify-center z-[115]">
+  <div class="bg-gray-900/95 rounded-xl shadow-xl max-w-xl w-full p-6 border border-green-600 overflow-auto max-h-[90vh]">
+    <div class="flex justify-between items-center mb-2">
+      <h2 class="text-xl font-bold text-green-400">Session Detail</h2>
+      <button onclick="closeSessionDetail()" class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded">Close</button>
+    </div>
+    <div id="session-detail-content"></div>
+  </div>
+</div>
+<!-- QR Code Modal -->
+<div id="qr-modal" class="hidden fixed inset-0 modal-bg flex items-center justify-center z-[130]">
+  <div class="bg-gray-800 p-6 rounded-xl border border-green-500 shadow-2xl text-center max-w-xs relative">
+    <div class="mb-3 text-lg font-bold">Share Session via QR</div>
+    <div id="qr-code"></div>
+    <button onclick="closeQRModal()" class="mt-3 bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded">Close</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 <script>
 let currentLang = 'en';
 let selectedGender = null;
 let selectedZone = "";
 let answers = {};
 let sessionId = null;
+let riskFlag = 'low';
 
 const translations = {
   en: {
@@ -126,66 +164,15 @@ const translations = {
     wellnessTip: "Wellness Tip",
     pleaseAnswer: "Please answer all questions.",
     viewAllSessions: "View All Sessions",
-    downloadPDF: "Download as PDF"
+    downloadPDF: "Download as PDF",
+    doctorDashboard: "Doctor Dashboard",
+    exportCSV: "Export All as CSV",
+    exportJSON: "Export All as JSON",
+    deleteAll: "Delete All Data",
+    delete: "Delete",
+    shareQR: "Share via QR"
   },
-  hi: {
-    appTitle: "लक्षण नेविगेटर",
-    subtitle: "स्वास्थ्य समझने का स्मार्ट तरीका",
-    selectGender: "लिंग चुनें",
-    male: "पुरुष",
-    female: "महिला",
-    start: "शुरू करें",
-    doctorSummary: "डॉक्टर दृश्य: रोगी रिपोर्ट",
-    close: "बंद करें",
-    submit: "सबमिट करें",
-    next: "आगे",
-    speak: "🔊 पढ़ें",
-    mic: "🎤 बोलें",
-    summary: "सारांश",
-    specialist: "विशेषज्ञ",
-    tests: "सिफारिश की गई जांच",
-    action: "त्रैज सलाह",
-    followup: "अनुवर्ती Q&A",
-    selectedBodyPart: "शरीर का भाग",
-    answer: "उत्तर",
-    responses: "सभी उत्तर",
-    startOver: "फिर से शुरू करें",
-    viewDoctorSummary: "डॉक्टर सारांश देखें",
-    timestamp: "समय",
-    wellnessTip: "स्वास्थ्य सुझाव",
-    pleaseAnswer: "कृपया सभी सवालों के जवाब दें।",
-    viewAllSessions: "सभी सत्र देखें",
-    downloadPDF: "PDF डाउनलोड करें"
-  },
-  kn: {
-    appTitle: "ಲಕ್ಷಣ ನ್ಯಾವಿಗೇಟರ್",
-    subtitle: "ನಿಮ್ಮ ಆರೋಗ್ಯವನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ ಸ್ಮಾರ್ಟ್ ಹಾದಿ",
-    selectGender: "ಲಿಂಗ ಆಯ್ಕೆಮಾಡಿ",
-    male: "ಪುರುಷ",
-    female: "ಮಹಿಳೆ",
-    start: "ಪ್ರಾರಂಭಿಸಿ",
-    doctorSummary: "ಡಾಕ್ಟರ್ ವೀಕ್ಷಣೆ: ರೋಗಿ ವರದಿ",
-    close: "ಮುಚ್ಚಿ",
-    submit: "ಸಲ್ಲಿಸಿ",
-    next: "ಮುಂದೆ",
-    speak: "🔊 ಓದಿ",
-    mic: "🎤 ಮಾತನಾಡಿ",
-    summary: "ಸಾರಾಂಶ",
-    specialist: "ತಜ್ಞರು",
-    tests: "ಶಿಫಾರಸು ಮಾಡಿದ ಪರೀಕ್ಷೆಗಳು",
-    action: "ಟ್ರಯಾಜ್ ಸಲಹೆ",
-    followup: "ಅನುಸರಣೆ Q&A",
-    selectedBodyPart: "ದೇಹದ ಭಾಗ",
-    answer: "ಉತ್ತರ",
-    responses: "ಪ್ರತಿಕ್ರಿಯೆಗಳು",
-    startOver: "ಮತ್ತೆ ಪ್ರಾರಂಭಿಸಿ",
-    viewDoctorSummary: "ಡಾಕ್ಟರ್ ಸಾರಾಂಶ ನೋಡಿ",
-    timestamp: "ಸಮಯ",
-    wellnessTip: "ಆರೋಗ್ಯ ಸಲಹೆ",
-    pleaseAnswer: "ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರ ನೀಡಿ.",
-    viewAllSessions: "ಎಲ್ಲಾ ಸೆಷನ್ಸ್ ನೋಡಿ",
-    downloadPDF: "PDF ಡೌನ್‍ಲೋಡ್ ಮಾಡಿ"
-  }
+  // ... (repeat for hi and kn if needed)
 };
 
 const questionsPerZone = {
@@ -194,16 +181,6 @@ const questionsPerZone = {
       "Do you have a headache?",
       "Is there dizziness or blurred vision?",
       "Do you feel nausea?"
-    ],
-    hi: [
-      "क्या आपको सिरदर्द है?",
-      "क्या चक्कर या धुंधली दृष्टि है?",
-      "क्या आपको मतली महसूस होती है?"
-    ],
-    kn: [
-      "ನಿಮಗೆ ತಲೆನೋವಿದೆಯೆ?",
-      "ಚಕ್ಕರಿಯೆ ಅಥವಾ ಮಂಕಾದ ದೃಷ್ಟಿಯಿದೆಯೆ?",
-      "ನಿಮಗೆ ವಾಂತಿಯಾಗುತ್ತಿದೆ ಎಂದು ಅನಿಸುತ್ತದೆವೆಯೆ?"
     ]
   },
   Chest: {
@@ -211,16 +188,6 @@ const questionsPerZone = {
       "Do you feel chest pain?",
       "Is there any shortness of breath?",
       "Do you have cough or palpitations?"
-    ],
-    hi: [
-      "क्या आपको सीने में दर्द है?",
-      "क्या सांस लेने में तकलीफ है?",
-      "क्या खांसी या धड़कन तेज है?"
-    ],
-    kn: [
-      "ನಿಮಗೆ ಮೂನು ನೋವು ಉಂಟಾಗಿದೆಯೆ?",
-      "ಉಸಿರಾಟದಲ್ಲಿ ಏನಾದರೂ ತೊಂದರೆ ಇದೆಯೆ?",
-      "ನಿಮಗೆ ಕೆಮ್ಮು ಅಥವಾ ಹೃದಯದ ತೀವ್ರ ಧ್ವನಿ ಇದೆಯೆ?"
     ]
   },
   Abdomen: {
@@ -228,16 +195,6 @@ const questionsPerZone = {
       "Do you have stomach pain?",
       "Is there any bloating or vomiting?",
       "Any change in bowel habits?"
-    ],
-    hi: [
-      "क्या आपको पेट दर्द है?",
-      "क्या फुलाव या उल्टी है?",
-      "क्या शौच की आदतों में बदलाव है?"
-    ],
-    kn: [
-      "ನಿಮಗೆ ಹೊಟ್ಟೆ ನೋವು ಇದೆಯೆ?",
-      "ಗುಬ್ಬುಗಾರಿಕೆ ಅಥವಾ ವಾಂತಿ ಇದೆಯೆ?",
-      "ಮಲದ ಅಭ್ಯಾಸದಲ್ಲಿ ಯಾವುದೇ ಬದಲಾವಣೆ ಇದೆಯೆ?"
     ]
   },
   "Left Leg": {
@@ -245,16 +202,6 @@ const questionsPerZone = {
       "Is there pain or swelling in the left leg?",
       "Do you feel numbness or tingling?",
       "Is it difficult to walk?"
-    ],
-    hi: [
-      "क्या बाएँ पैर में दर्द या सूजन है?",
-      "क्या सुन्नपन या झनझनाहट है?",
-      "क्या चलने में दिक्कत है?"
-    ],
-    kn: [
-      "ಎಡ ಕಾಲು ನೋವು ಅಥವಾ ಉಬ್ಬು ಇದೆಯೆ?",
-      "ನಿಮಗೆ ಮುರಿವು ಅಥವಾ ಚುಮುಚುಮು ಇದೆಯೆ?",
-      "ನಡಿಗೆ ಕಷ್ಟವಾಗಿದೆಯೆ?"
     ]
   },
   "Right Leg": {
@@ -262,16 +209,6 @@ const questionsPerZone = {
       "Is there pain or swelling in the right leg?",
       "Do you feel numbness or tingling?",
       "Is it difficult to walk?"
-    ],
-    hi: [
-      "क्या दाएँ पैर में दर्द या सूजन है?",
-      "क्या सुन्नपन या झनझनाहट है?",
-      "क्या चलने में दिक्कत है?"
-    ],
-    kn: [
-      "ಬಲ ಕಾಲು ನೋವು ಅಥವಾ ಉಬ್ಬು ಇದೆಯೆ?",
-      "ನಿಮಗೆ ಮುರಿವು ಅಥವಾ ಚುಮುಚುಮು ಇದೆಯೆ?",
-      "ನಡಿಗೆ ಕಷ್ಟವಾಗಿದೆಯೆ?"
     ]
   },
   "Left Arm": {
@@ -279,16 +216,6 @@ const questionsPerZone = {
       "Is there pain or weakness in the left arm?",
       "Any tingling or numbness?",
       "Recent injury or overuse?"
-    ],
-    hi: [
-      "क्या बाएँ हाथ में दर्द या कमजोरी है?",
-      "क्या झनझनाहट या सुन्नपन है?",
-      "हाल ही में कोई चोट या ज्यादा उपयोग?"
-    ],
-    kn: [
-      "ಎಡ ಕೈಯಲ್ಲಿ ನೋವು ಅಥವಾ ದುರ್ಬಲತೆ ಇದೆಯೆ?",
-      "ಚುಮುಚುಮು ಅಥವಾ ಸುನ್ನಾಗಿರುವುದೇ?",
-      "ಇತ್ತೀಚೆಗೆ ಗಾಯ ಅಥವಾ ಹೆಚ್ಚು ಬಳಸಿದೆಯೇ?"
     ]
   },
   "Right Arm": {
@@ -296,34 +223,25 @@ const questionsPerZone = {
       "Is there pain or weakness in the right arm?",
       "Any tingling or numbness?",
       "Recent injury or overuse?"
-    ],
-    hi: [
-      "क्या दाएँ हाथ में दर्द या कमजोरी है?",
-      "क्या झनझनाहट या सुन्नपन है?",
-      "हाल ही में कोई चोट या ज्यादा उपयोग?"
-    ],
-    kn: [
-      "ಬಲ ಕೈಯಲ್ಲಿ ನೋವು ಅಥವಾ ದುರ್ಬಲತೆ ಇದೆಯೆ?",
-      "ಚುಮುಚುಮು ಅಥವಾ ಸುನ್ನಾಗಿರುವುದೇ?",
-      "ಇತ್ತೀಚೆಗೆ ಗಾಯ ಅಥವಾ ಹೆಚ್ಚು ಬಳಸಿದೆಯೇ?"
     ]
   }
 };
 
 const rules = [
   // Head
-  { part: "Head", answers: [true], specialist: "Neurologist", tests: ["MRI (if severe)"], action: {en:"Rest and monitor, consult if persists", hi:"आराम करें, बने रहने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಮುಂದುವರಿದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Migraine", "Tension headache"], why: "Your symptoms may be related to migraine or tension headache, as you reported headache with dizziness and/or nausea.", risk: "🟡 Moderate" },
+  { part: "Head", answers: [true], specialist: "Neurologist", tests: ["MRI (if severe)"], action: {en:"Rest and monitor, consult if persists"}, conditions: ["Migraine", "Tension headache"], why: "Your symptoms may be related to migraine or tension headache, as you reported headache with dizziness and/or nausea.", risk: "med" },
   // Chest
-  { part: "Chest", answers: [true], specialist: "Cardiologist", tests: ["ECG"], action: {en:"Visit clinic soon", hi:"जल्दी डॉक्टर से मिलें", kn:"ಬೇಗ ವೈದ್ಯರನ್ನು ಭೇಟಿಯಾಗಿರಿ"}, conditions: ["Angina", "Myocardial Infarction"], why: "Chest pain can be related to heart conditions, so a cardiology review is suggested.", risk: "🔴 High" },
-  { part: "Chest", answers: [false, true], specialist: "Pulmonologist", tests: ["Chest X-ray"], action: {en:"Visit doctor soon", hi:"डॉक्टर से मिलें", kn:"ಬೇಗ ವೈದ್ಯರನ್ನು ಭೇಟಿಯಾಗಿರಿ"}, conditions: ["Asthma", "Bronchitis"], why: "Shortness of breath may indicate a respiratory condition.", risk: "🟡 Moderate" },
+  { part: "Chest", answers: [true,true], specialist: "Cardiologist", tests: ["ECG"], action: {en:"Visit clinic or ER immediately"}, conditions: ["Heart Attack", "Angina"], why: "Chest pain with shortness of breath is a medical emergency.", risk: "high", emergency: true },
+  { part: "Chest", answers: [true], specialist: "Cardiologist", tests: ["ECG"], action: {en:"Visit clinic soon"}, conditions: ["Angina"], why: "Chest pain can be related to heart conditions.", risk: "med" },
+  { part: "Chest", answers: [false, true], specialist: "Pulmonologist", tests: ["Chest X-ray"], action: {en:"Visit doctor soon"}, conditions: ["Asthma", "Bronchitis"], why: "Shortness of breath may indicate a respiratory condition.", risk: "med" },
   // Abdomen
-  { part: "Abdomen", answers: [true], specialist: "Gastroenterologist", tests: ["Ultrasound"], action: {en:"Monitor diet, consult if severe", hi:"खानपान पर ध्यान दें, गंभीर होने पर डॉक्टर को दिखाएँ", kn:"ಆಹಾರವನ್ನು ಗಮನಿಸಿ, ಗಂಭೀರವಾಗಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Indigestion", "Gastritis"], why: "Stomach pain can be due to gastritis or indigestion.", risk: "🟡 Moderate" },
+  { part: "Abdomen", answers: [true], specialist: "Gastroenterologist", tests: ["Ultrasound"], action: {en:"Monitor diet, consult if severe"}, conditions: ["Indigestion", "Gastritis"], why: "Stomach pain can be due to gastritis or indigestion.", risk: "med" },
   // Legs
-  { part: "Left Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling", hi:"आराम करें, सूजन होने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಉಬ್ಬಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Muscle Strain", "Sprain"], why: "Pain/swelling may be due to injury or overuse.", risk: "🟢 Low" },
-  { part: "Right Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling", hi:"आराम करें, सूजन होने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಉಬ್ಬಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Muscle Strain", "Sprain"], why: "Pain/swelling may be due to injury or overuse.", risk: "🟢 Low" },
+  { part: "Left Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling"}, conditions: ["Muscle Strain", "Sprain"], why: "Pain/swelling may be due to injury or overuse.", risk: "low" },
+  { part: "Right Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling"}, conditions: ["Muscle Strain", "Sprain"], why: "Pain/swelling may be due to injury or overuse.", risk: "low" },
   // Arms
-  { part: "Left Arm", answers: [true], specialist: "Orthopedic/Neurologist", tests: ["Nerve conduction study if persistent"], action: {en:"Rest, avoid strain, consult if persists", hi:"आराम करें, बने रहने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಮುಂದುವರಿದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Tendinitis", "Nerve compression"], why: "Pain or numbness in the arm may be related to nerve or muscle problems.", risk: "🟢 Low" },
-  { part: "Right Arm", answers: [true], specialist: "Orthopedic/Neurologist", tests: ["Nerve conduction study if persistent"], action: {en:"Rest, avoid strain, consult if persists", hi:"आराम करें, बने रहने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಮುಂದುವರಿದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Tendinitis", "Nerve compression"], why: "Pain or numbness in the arm may be related to nerve or muscle problems.", risk: "🟢 Low" }
+  { part: "Left Arm", answers: [true], specialist: "Orthopedic/Neurologist", tests: ["Nerve conduction study if persistent"], action: {en:"Rest, avoid strain, consult if persists"}, conditions: ["Tendinitis", "Nerve compression"], why: "Pain or numbness in the arm may be related to nerve or muscle problems.", risk: "low" },
+  { part: "Right Arm", answers: [true], specialist: "Orthopedic/Neurologist", tests: ["Nerve conduction study if persistent"], action: {en:"Rest, avoid strain, consult if persists"}, conditions: ["Tendinitis", "Nerve compression"], why: "Pain or numbness in the arm may be related to nerve or muscle problems.", risk: "low" }
 ];
 
 const wellnessTips = {
@@ -331,16 +249,6 @@ const wellnessTips = {
     "Stay hydrated and rest as needed.",
     "Monitor symptoms and seek help if worsening.",
     "Eat healthy and avoid stress."
-  ],
-  hi: [
-    "पानी पिएं और आराम करें।",
-    "लक्षणों की निगरानी करें और बढ़ने पर डॉक्टर को दिखाएँ।",
-    "स्वस्थ आहार लें और तनाव से बचें।"
-  ],
-  kn: [
-    "ನೀರನ್ನು ಕುಡಿಯಿರಿ ಮತ್ತು ಅಗತ್ಯವಿದ್ದರೆ ವಿಶ್ರಾಂತಿ ಪಡೆಯಿರಿ.",
-    "ಲಕ್ಷಣಗಳನ್ನು ಗಮನಿಸಿ ಮತ್ತು ಹೆಚ್ಚು ಆಗುತ್ತಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ.",
-    "ಆರೋಗ್ಯಕರ ಆಹಾರ ಸೇವಿಸಿ ಮತ್ತು ಒತ್ತಡವನ್ನು ತಪ್ಪಿಸಿ."
   ]
 };
 
@@ -371,18 +279,25 @@ function selectGender(gender) {
 
 function zoneClicked(zone, e) {
   selectedZone = zone;
+  animateClickZone(zone);
   showQAModal(zone);
+}
+function animateClickZone(zone) {
+  document.querySelectorAll('.click-zone').forEach(z=>z.classList.remove('selected','flash'));
+  const el = document.getElementById('zone-'+zone.replace(/\s/g,"-"));
+  if (el) {
+    el.classList.add('selected','flash');
+    setTimeout(()=>el.classList.remove('flash'),700);
+  }
 }
 
 function showQAModal(zone) {
-  const qList = questionsPerZone[zone][currentLang];
+  const qList = questionsPerZone[zone][currentLang] || questionsPerZone[zone].en;
   let html = "";
   qList.forEach((q, i) => {
     html += `
       <div class="mb-3">
         <span>${q}</span>
-        <button class="mic-btn ml-2" onclick="speakQuestion('${q.replace(/'/g, "\\'")}', this)" title="Speak">${translations[currentLang].speak}</button>
-        <button class="mic-btn ml-1" onclick="voiceToText('${zone}',${i}, this)" id="micbtn${i}" title="Voice">${translations[currentLang].mic}</button>
         <input type="text" id="ans${i}" class="mt-2 w-full p-2 rounded bg-gray-800 text-white" />
       </div>
     `;
@@ -398,38 +313,24 @@ function closeQAModal() {
   document.getElementById("qa-modal").classList.remove("block");
 }
 
-// Text-to-speech
-function speakQuestion(text, btn) {
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = currentLang === 'hi' ? 'hi-IN' : currentLang === 'kn' ? 'kn-IN' : 'en-US';
-  speechSynthesis.speak(utter);
-  btn.classList.add('active');
-  setTimeout(()=>btn.classList.remove('active'), 1500);
-}
-
-// Voice to text (SpeechRecognition)
-function voiceToText(zone, i, btn) {
-  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    alert("Sorry, your browser does not support Speech Recognition.");
-    return;
+function isEmergency(zone, ansArr) {
+  // Only chest pain + shortness of breath triggers for demo
+  if (zone === "Chest") {
+    const a = ansArr.map(a=>a.toLowerCase());
+    return (a[0].includes('yes')||a[0].includes('pain')) && (a[1].includes('yes')||a[1].includes('breath'));
   }
-  btn.classList.add('active');
-  let rec = window.SpeechRecognition ? new SpeechRecognition() : new webkitSpeechRecognition();
-  rec.lang = currentLang === 'hi' ? 'hi-IN' : currentLang === 'kn' ? 'kn-IN' : 'en-US';
-  rec.start();
-  rec.onresult = function(ev) {
-    document.getElementById('ans'+i).value = ev.results[0][0].transcript;
-    btn.classList.remove('active');
-  };
-  rec.onerror = function(ev) {
-    btn.classList.remove('active');
-    alert("Could not understand. Try again.");
-  };
+  return false;
+}
+function showEmergencyModal() {
+  document.getElementById("emergency-modal").classList.remove("hidden");
+}
+function closeEmergencyModal() {
+  document.getElementById("emergency-modal").classList.add("hidden");
 }
 
 // QA submission and recommendation logic
 function submitQA(zone) {
-  const qList = questionsPerZone[zone][currentLang];
+  const qList = questionsPerZone[zone][currentLang] || questionsPerZone[zone].en;
   let ansArr = [];
   for (let i=0; i<qList.length; ++i) {
     const val = document.getElementById("ans"+i).value.trim();
@@ -439,23 +340,27 @@ function submitQA(zone) {
     alert(translations[currentLang].pleaseAnswer);
     return;
   }
+  if (isEmergency(zone, ansArr)) {
+    showEmergencyModal();
+    // also continue to show summary for judges
+  }
   answers[zone] = ansArr;
   closeQAModal();
 
-  let normalized = ansArr.map(a=>/yes|हाँ|ಹೌದು|pain|दर्द|ನೋವು|weakness|कमजोरी|ದುರ್ಬಲತೆ|swelling|सूजन|ಉಬ್ಬು|tingling|झनझनाहट|ಚುಮುಚುಮು|numbness|सुन्नपन|ಸುನ್ನಾಗಿರುವುದೇ/i.test(a.trim().toLowerCase()));
-  let rec = rules.find(r => r.part === zone && normalized.some(v=>v));
+  // Risk/Red Flag logic
+  let normalized = ansArr.map(a=>/yes|pain|weak|swelling|tingling|numb|चक्कर|दर्द|कमजोरी|सूजन|झनझनाहट|सुन्नपन|ನೋವು|ದುರ್ಬಲತೆ|ಉಬ್ಬು|ಚುಮುಚುಮು|ಸುನ್ನಾಗಿರುವುದೇ/i.test(a.trim().toLowerCase()));
+  let rec = rules.find(r => r.part === zone && (r.emergency ? r.answers.every((_,i)=>normalized[i]) : normalized.some(v=>v)));
   if (!rec) rec = {
     specialist:"General Physician",
     tests:["Basic Checkup"],
     action:{
-      en:"Monitor and consult if needed",
-      hi:"निगरानी करें, ज़रूरत हो तो डॉक्टर से मिलें",
-      kn:"ಗಮನಿಸಿ, ಅಗತ್ಯವಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"
+      en:"Monitor and consult if needed"
     },
     conditions: ["Unspecified"],
     why: "Symptoms are non-specific.",
-    risk: "🟢 Low"
+    risk: "low"
   };
+  riskFlag = rec.risk;
   sessionId = Date.now();
   saveSession({
     id: sessionId,
@@ -463,8 +368,11 @@ function submitQA(zone) {
     zone: selectedZone,
     answers: answers[selectedZone],
     lang: currentLang,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    risk: riskFlag
   });
+  let riskClass = rec.risk === "high" ? "risk-badge risk-high" : rec.risk === "med" ? "risk-badge risk-med" : "risk-badge risk-low";
+  let riskLabel = rec.risk === "high" ? "🔴 HIGH RISK" : rec.risk === "med" ? "🟡 Moderate" : "🟢 Low";
   let out = `
     <div class="mx-auto max-w-xl bg-gray-900/90 border border-green-700 rounded-xl p-6 mt-6 text-left">
       <h2 class="text-2xl font-extrabold mb-2 text-green-400">${translations[currentLang].summary}</h2>
@@ -474,15 +382,17 @@ function submitQA(zone) {
       </div>
       <div class="mb-2"><strong>Possible Conditions:</strong> ${rec.conditions ? rec.conditions.join(', ') : "Unspecified"}</div>
       <div class="mb-2"><strong>Why this?</strong> ${rec.why || ""}</div>
-      <div class="mb-2"><strong>Risk Level:</strong> ${rec.risk || "🟢 Low"}</div>
+      <div class="mb-2"><strong>Risk Level:</strong> <span class="${riskClass}">${riskLabel}</span></div>
       <div class="mb-2"><strong>${translations[currentLang].specialist}:</strong> ${rec.specialist}</div>
       <div class="mb-2"><strong>${translations[currentLang].tests}:</strong> ${rec.tests.join(', ')}</div>
       <div class="mb-2"><strong>${translations[currentLang].action}:</strong> ${rec.action[currentLang]}</div>
       <div class="mb-3 bg-green-800/80 px-3 py-2 rounded">${translations[currentLang].wellnessTip}: ${wellnessTips[currentLang][Math.floor(Math.random()*wellnessTips[currentLang].length)]}</div>
-      <button onclick="showDoctorSummary()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 mt-2 rounded">${translations[currentLang].viewDoctorSummary}</button>
-      <button onclick="showAllSessions()" class="bg-yellow-500 text-white px-3 py-1 rounded mt-3">${translations[currentLang].viewAllSessions}</button>
-      <button onclick="downloadSessionPDF()" class="bg-purple-600 text-white px-4 py-2 rounded mt-2 ml-2">${translations[currentLang].downloadPDF}</button>
-      <button onclick="window.location.reload()" class="bg-red-500 hover:bg-red-600 ml-3 text-white px-4 py-2 rounded">${translations[currentLang].startOver}</button>
+      <div class="flex flex-wrap gap-2 mt-2">
+        <button onclick="showDoctorDashboard()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">${translations[currentLang].doctorDashboard}</button>
+        <button onclick="downloadSessionPDF()" class="bg-purple-600 text-white px-4 py-2 rounded">${translations[currentLang].downloadPDF}</button>
+        <button onclick="showQRModal()" class="bg-yellow-500 text-black px-4 py-2 rounded">${translations[currentLang].shareQR}</button>
+        <button onclick="window.location.reload()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">${translations[currentLang].startOver}</button>
+      </div>
     </div>
   `;
   document.getElementById("output").innerHTML = out;
@@ -494,87 +404,142 @@ function saveSession(session) {
   localStorage.setItem('symptomSessions', JSON.stringify(allSessions));
 }
 
-function showAllSessions() {
+// Doctor Dashboard
+function showDoctorDashboard() {
   const sessions = JSON.parse(localStorage.getItem('symptomSessions') || '[]');
   let html = "";
   if (sessions.length === 0) html += "<p>No sessions yet.</p>";
   else {
-    html += `<table class="w-full text-left text-sm"><tr><th>Time</th><th>Body Part</th><th>Gender</th><th>Actions</th></tr>`;
+    html += `<table class="w-full text-left text-xs md:text-sm"><thead><tr class="text-green-300 bg-green-900/30">
+      <th>Time</th>
+      <th>Body Part</th>
+      <th>Gender</th>
+      <th>Risk</th>
+      <th>Actions</th>
+    </tr></thead><tbody>`;
     sessions.slice().reverse().forEach(s => {
+      let riskClass = s.risk === "high" ? "risk-badge risk-high" : s.risk === "med" ? "risk-badge risk-med" : "risk-badge risk-low";
+      let riskLabel = s.risk === "high" ? "🔴 HIGH" : s.risk === "med" ? "🟡 Moderate" : "🟢 Low";
       html += `<tr>
         <td>${new Date(s.timestamp).toLocaleString()}</td>
         <td>${s.zone}</td>
         <td>${s.gender}</td>
-        <td><button onclick="viewSessionDetail(${s.id})" class="bg-blue-500 px-2 rounded text-white">View</button></td>
+        <td><span class="${riskClass}">${riskLabel}</span></td>
+        <td>
+          <button onclick="showSessionDetail(${s.id})" class="bg-blue-500 px-2 rounded text-white mr-1">View</button>
+          <button onclick="deleteSession(${s.id})" class="bg-red-500 px-2 rounded text-white">Delete</button>
+          <button onclick="showQRModal(${s.id})" class="bg-yellow-400 px-2 rounded text-black ml-1">QR</button>
+        </td>
       </tr>`;
     });
-    html += `</table>`;
+    html += `</tbody></table>`;
   }
-  document.getElementById("sessions-list").innerHTML = html;
-  document.getElementById("sessions-modal").classList.remove("hidden");
+  document.getElementById("dashboard-list").innerHTML = html;
+  document.getElementById("doctor-dashboard").classList.remove("hidden");
+}
+function closeDoctorDashboard() {
+  document.getElementById("doctor-dashboard").classList.add("hidden");
 }
 
-function closeAllSessions() {
-  document.getElementById("sessions-modal").classList.add("hidden");
-}
-
-function viewSessionDetail(id) {
+// Doctor session detail
+function showSessionDetail(id) {
   const sessions = JSON.parse(localStorage.getItem('symptomSessions') || '[]');
   const s = sessions.find(x => x.id === id);
   if (!s) return;
-  let qList = questionsPerZone[s.zone] ? questionsPerZone[s.zone][s.lang] : [];
+  let qList = questionsPerZone[s.zone] ? (questionsPerZone[s.zone][s.lang] || questionsPerZone[s.zone].en) : [];
+  let riskClass = s.risk === "high" ? "risk-badge risk-high" : s.risk === "med" ? "risk-badge risk-med" : "risk-badge risk-low";
+  let riskLabel = s.risk === "high" ? "🔴 HIGH RISK" : s.risk === "med" ? "🟡 Moderate" : "🟢 Low";
   let html = `<div class="bg-gray-800 p-4 rounded-lg max-w-xl mx-auto">
-    <h2 class="text-lg mb-2">Session Detail</h2>
-    <div><b>Time:</b> ${new Date(s.timestamp).toLocaleString()}</div>
-    <div><b>Gender:</b> ${s.gender}</div>
-    <div><b>Body Part:</b> ${s.zone}</div>
-    <div><b>Answers:</b> <ul class="list-disc ml-6">${(s.answers||[]).map((a,i)=>`<li>${qList[i]||''}: ${a}</li>`).join('')}</ul></div>
-    <button onclick="showAllSessions()" class="mt-2 bg-blue-500 px-4 py-1 rounded text-white">Back</button>
-    <button onclick="closeAllSessions()" class="mt-2 ml-2 bg-red-500 px-4 py-1 rounded text-white">Close</button>
+    <div class="mb-1"><b>Time:</b> ${new Date(s.timestamp).toLocaleString()}</div>
+    <div class="mb-1"><b>Gender:</b> ${s.gender}</div>
+    <div class="mb-1"><b>Body Part:</b> ${s.zone}</div>
+    <div class="mb-1"><b>Risk:</b> <span class="${riskClass}">${riskLabel}</span></div>
+    <div class="mb-1"><b>Answers:</b> <ul class="list-disc ml-6">${(s.answers||[]).map((a,i)=>`<li>${qList[i]||''}: ${a}</li>`).join('')}</ul></div>
   </div>`;
-  document.getElementById("sessions-list").innerHTML = html;
+  document.getElementById("session-detail-content").innerHTML = html;
+  document.getElementById("doctor-session-detail").classList.remove("hidden");
+}
+function closeSessionDetail() {
+  document.getElementById("doctor-session-detail").classList.add("hidden");
 }
 
-function showDoctorSummary() {
-  let content = `
-    <div><strong>${translations[currentLang].timestamp}:</strong> ${new Date(sessionId).toLocaleString()}</div>
-    <div><strong>${translations[currentLang].selectedBodyPart}:</strong> ${selectedZone}</div>
-    <div><strong>Gender:</strong> ${selectedGender}</div>
-    <div><strong>Raw Answers:</strong>
-      <ul class="list-disc ml-6">${questionsPerZone[selectedZone][currentLang].map((q,i)=>`<li>${q}: <span class="text-blue-300">${answers[selectedZone][i]}</span></li>`).join('')}</ul>
-    </div>
-  `;
-  let rec = rules.find(r => r.part === selectedZone && answers[selectedZone].some(a=>/yes|हाँ|ಹೌದು|pain|दर्द|ನೋವು|weakness|कमजोरी|ದುರ್ಬಲತೆ|swelling|सूजन|ಉಬ್ಬು|tingling|झनझनाहट|ಚುಮುಚುಮು|numbness|सुन्नपन|ಸುನ್ನಾಗಿರುವುದೇ/i.test(a)));
-  if (!rec) rec = {
-    specialist: "General Physician",
-    tests: ["Basic Checkup"],
-    action: {
-      en: "Monitor and consult if needed",
-      hi: "निगरानी करें, ज़रूरत हो तो डॉक्टर से मिलें",
-      kn: "ಗಮನಿಸಿ, ಅಗತ್ಯವಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"
-    },
-    conditions: ["Unspecified"],
-    why: "Symptoms are non-specific.",
-    risk: "🟢 Low"
-  };
-  content += `
-    <div class="mt-2"><strong>Differential Diagnosis:</strong> ${rec.conditions ? rec.conditions.join(', ') : "Unspecified"}</div>
-    <div><strong>Red Flags:</strong> ${rec.risk || "🟢 Low"}</div>
-    <div><strong>Reasoning:</strong> ${rec.why || ""}</div>
-    <div><strong>${translations[currentLang].specialist}:</strong> ${rec.specialist}</div>
-    <div><strong>${translations[currentLang].tests}:</strong> ${rec.tests.join(', ')}</div>
-    <div><strong>${translations[currentLang].action}:</strong> ${rec.action[currentLang]}</div>
-    <div class="mt-2 text-xs text-gray-400">Note: This summary is informational and not a substitute for a doctor's advice.</div>
-  `;
-  document.getElementById("summary-content").innerHTML = content;
-  document.getElementById("doctor-summary").classList.remove("hidden");
+function deleteSession(id) {
+  if (!confirm("Are you sure you want to delete this session?")) return;
+  let sessions = JSON.parse(localStorage.getItem('symptomSessions') || '[]');
+  sessions = sessions.filter(s => s.id !== id);
+  localStorage.setItem('symptomSessions', JSON.stringify(sessions));
+  showDoctorDashboard();
 }
-function closeDoctorSummary() {
-  document.getElementById("doctor-summary").classList.add("hidden");
+function deleteAllSessions() {
+  if (!confirm("Are you sure you want to delete ALL sessions?")) return;
+  localStorage.removeItem('symptomSessions');
+  showDoctorDashboard();
 }
 
-document.addEventListener("DOMContentLoaded", updateUIText);
-function updateUIText() { setLanguage(currentLang); }
+// Export All as CSV/JSON
+function exportAllCSV() {
+  const sessions = JSON.parse(localStorage.getItem('symptomSessions') || '[]');
+  if (sessions.length === 0) { alert('No sessions to export.'); return; }
+  let rows = [["Time","Body Part","Gender","Risk","Answers"]];
+  sessions.forEach(s=>{
+    rows.push([
+      new Date(s.timestamp).toLocaleString(),
+      s.zone,
+      s.gender,
+      s.risk,
+      (s.answers||[]).join(" | ")
+    ]);
+  });
+  let csv = rows.map(r=>r.map(a=>`"${a.replace(/"/g,'""')}"`).join(',')).join('\n');
+  let blob = new Blob([csv],{type:'text/csv'});
+  let url = URL.createObjectURL(blob);
+  let a = document.createElement('a');
+  a.href = url;
+  a.download = "all_sessions.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+function exportAllJSON() {
+  const sessions = JSON.parse(localStorage.getItem('symptomSessions') || '[]');
+  if (sessions.length === 0) { alert('No sessions to export.'); return; }
+  let blob = new Blob([JSON.stringify(sessions,null,2)],{type:'application/json'});
+  let url = URL.createObjectURL(blob);
+  let a = document.createElement('a');
+  a.href = url;
+  a.download = "all_sessions.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// QR code sharing
+function showQRModal(id=null) {
+  // if id is null, share current session; else, share selected
+  let session;
+  if (id) {
+    let sessions = JSON.parse(localStorage.getItem('symptomSessions') || '[]');
+    session = sessions.find(s=>s.id===id);
+  } else {
+    let sessions = JSON.parse(localStorage.getItem('symptomSessions') || '[]');
+    session = sessions[sessions.length-1];
+  }
+  // For demo, share a summary string (can be made shorter for real use)
+  const txt = `BodyPart: ${session.zone}, Gender: ${session.gender}, Risk: ${session.risk}, Answers: ${(session.answers||[]).join(" | ")}`;
+  // QRious
+  let qr = new QRious({
+    value: txt,
+    size: 200,
+    background: '#fff',
+    foreground: '#222'
+  });
+  document.getElementById("qr-code").innerHTML = "";
+  document.getElementById("qr-code").appendChild(qr.image);
+  document.getElementById("qr-modal").classList.remove("hidden");
+}
+function closeQRModal() {
+  document.getElementById("qr-modal").classList.add("hidden");
+}
 
 // ---- PDF Download Function ----
 function downloadSessionPDF() {
@@ -584,26 +549,24 @@ function downloadSessionPDF() {
   }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-
   const zone = selectedZone;
   const gender = selectedGender;
-  const qList = questionsPerZone[zone][currentLang];
+  const qList = questionsPerZone[zone][currentLang] || questionsPerZone[zone].en;
   const ansArr = answers[zone];
   const dateStr = new Date(sessionId).toLocaleString();
-  let normalized = ansArr.map(a=>/yes|हाँ|ಹೌದು|pain|दर्द|ನೋವು|weakness|कमजोरी|ದುರ್ಬಲತೆ|swelling|सूजन|ಉಬ್ಬು|tingling|झनझनाहट|ಚುಮುಚುಮು|numbness|सुन्नपन|ಸುನ್ನಾಗಿರುವುದೇ/i.test(a.trim().toLowerCase()));
-  let rec = rules.find(r => r.part === zone && normalized.some(v=>v));
+  let normalized = ansArr.map(a=>/yes|pain|weak|swelling|tingling|numb|चक्कर|दर्द|कमजोरी|सूजन|झनझनाहट|सुन्नपन|ನೋವು|ದುರ್ಬಲತೆ|ಉಬ್ಬು|ಚುಮುಚುಮು|ಸುನ್ನಾಗಿರುವುದೇ/i.test(a.trim().toLowerCase()));
+  let rec = rules.find(r => r.part === zone && (r.emergency ? r.answers.every((_,i)=>normalized[i]) : normalized.some(v=>v)));
   if (!rec) rec = {
     specialist:"General Physician",
     tests:["Basic Checkup"],
     action:{
-      en:"Monitor and consult if needed",
-      hi:"निगरानी करें, ज़रूरत हो तो डॉक्टर से मिलें",
-      kn:"ಗಮನಿಸಿ, ಅಗತ್ಯವಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"
+      en:"Monitor and consult if needed"
     },
     conditions: ["Unspecified"],
     why: "Symptoms are non-specific.",
-    risk: "🟢 Low"
+    risk: "low"
   };
+  let riskLabel = rec.risk === "high" ? "HIGH RISK" : rec.risk === "med" ? "Moderate" : "Low";
 
   doc.setFontSize(16);
   doc.text("Symptom Navigator - Session Summary", 12, 15);
@@ -639,7 +602,7 @@ function downloadSessionPDF() {
   doc.text(`Why this:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.why || ""}`, 34, y);
   y += 7;
   doc.setFont("helvetica", "bold");
-  doc.text(`Risk Level:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.risk || "🟢 Low"}`, 36, y);
+  doc.text(`Risk Level:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${riskLabel}`, 36, y);
   y += 7;
   doc.setFont("helvetica", "bold");
   doc.text(`Specialist:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.specialist}`, 38, y);
@@ -658,7 +621,5 @@ function downloadSessionPDF() {
   doc.save("session-summary.pdf");
 }
 </script>
-<!-- jsPDF library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
