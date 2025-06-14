@@ -41,8 +41,10 @@
   <p class="mt-2 italic text-blue-400 text-base" data-i18n="subtitle">Your smart step towards understanding your health</p>
 </header>
 
-<!-- Gender Selection -->
+<!-- Gender & Name Selection -->
 <div id="gender-selection" class="text-center py-5">
+  <!-- Uncomment below to enable patient name input -->
+  <!-- <input id="patient-name" type="text" class="mb-4 p-2 rounded text-black" placeholder="Enter Patient Name" style="width:220px" /> -->
   <h2 class="text-lg font-semibold mb-4" data-i18n="selectGender">Select Gender</h2>
   <button onclick="selectGender('male')" class="bg-green-500 hover:bg-green-600 transition-colors duration-200 text-white px-6 py-2 rounded-full mx-2 shadow-md">👨 <span data-i18n="male">Male</span></button>
   <button onclick="selectGender('female')" class="bg-pink-500 hover:bg-pink-600 transition-colors duration-200 text-white px-6 py-2 rounded-full mx-2 shadow-md">👩 <span data-i18n="female">Female</span></button>
@@ -51,12 +53,15 @@
 <!-- Body Section -->
 <div id="body-section" class="relative flex justify-center hidden mt-4">
   <img id="body-image" src="" alt="Body Model" class="max-w-xs rounded-2xl shadow-lg border-2 border-green-200 dark:border-green-700" />
-  <!-- click-zones -->
+  <!-- click-zones, ARMS ADDED -->
   <div class="click-zone" style="top: 13%; left: 44%; width: 12%; height: 10%;" onclick="zoneClicked('Head', event)"></div>
   <div class="click-zone" style="top: 27%; left: 42%; width: 16%; height: 13%;" onclick="zoneClicked('Chest', event)"></div>
   <div class="click-zone" style="top: 41%; left: 44%; width: 12%; height: 13%;" onclick="zoneClicked('Abdomen', event)"></div>
   <div class="click-zone" style="top: 62%; left: 30%; width: 12%; height: 24%;" onclick="zoneClicked('Left Leg', event)"></div>
   <div class="click-zone" style="top: 62%; left: 58%; width: 12%; height: 24%;" onclick="zoneClicked('Right Leg', event)"></div>
+  <!-- ARMS (approximate coordinates) -->
+  <div class="click-zone" style="top: 29%; left: 30%; width: 10%; height: 26%;" onclick="zoneClicked('Left Arm', event)"></div>
+  <div class="click-zone" style="top: 29%; left: 60%; width: 10%; height: 26%;" onclick="zoneClicked('Right Arm', event)"></div>
   <div id="options-popover" class="absolute z-40 hidden"></div>
 </div>
 
@@ -120,7 +125,8 @@ const translations = {
     timestamp: "Time",
     wellnessTip: "Wellness Tip",
     pleaseAnswer: "Please answer all questions.",
-    viewAllSessions: "View All Sessions"
+    viewAllSessions: "View All Sessions",
+    downloadPDF: "Download as PDF"
   },
   hi: {
     appTitle: "लक्षण नेविगेटर",
@@ -148,7 +154,8 @@ const translations = {
     timestamp: "समय",
     wellnessTip: "स्वास्थ्य सुझाव",
     pleaseAnswer: "कृपया सभी सवालों के जवाब दें।",
-    viewAllSessions: "सभी सत्र देखें"
+    viewAllSessions: "सभी सत्र देखें",
+    downloadPDF: "PDF डाउनलोड करें"
   },
   kn: {
     appTitle: "ಲಕ್ಷಣ ನ್ಯಾವಿಗೇಟರ್",
@@ -176,7 +183,8 @@ const translations = {
     timestamp: "ಸಮಯ",
     wellnessTip: "ಆರೋಗ್ಯ ಸಲಹೆ",
     pleaseAnswer: "ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರ ನೀಡಿ.",
-    viewAllSessions: "ಎಲ್ಲಾ ಸೆಷನ್ಸ್ ನೋಡಿ"
+    viewAllSessions: "ಎಲ್ಲಾ ಸೆಷನ್ಸ್ ನೋಡಿ",
+    downloadPDF: "PDF ಡೌನ್‍ಲೋಡ್ ಮಾಡಿ"
   }
 };
 
@@ -265,20 +273,57 @@ const questionsPerZone = {
       "ನಿಮಗೆ ಮುರಿವು ಅಥವಾ ಚುಮುಚುಮು ಇದೆಯೆ?",
       "ನಡಿಗೆ ಕಷ್ಟವಾಗಿದೆಯೆ?"
     ]
+  },
+  "Left Arm": {
+    en: [
+      "Is there pain or weakness in the left arm?",
+      "Any tingling or numbness?",
+      "Recent injury or overuse?"
+    ],
+    hi: [
+      "क्या बाएँ हाथ में दर्द या कमजोरी है?",
+      "क्या झनझनाहट या सुन्नपन है?",
+      "हाल ही में कोई चोट या ज्यादा उपयोग?"
+    ],
+    kn: [
+      "ಎಡ ಕೈಯಲ್ಲಿ ನೋವು ಅಥವಾ ದುರ್ಬಲತೆ ಇದೆಯೆ?",
+      "ಚುಮುಚುಮು ಅಥವಾ ಸುನ್ನಾಗಿರುವುದೇ?",
+      "ಇತ್ತೀಚೆಗೆ ಗಾಯ ಅಥವಾ ಹೆಚ್ಚು ಬಳಸಿದೆಯೇ?"
+    ]
+  },
+  "Right Arm": {
+    en: [
+      "Is there pain or weakness in the right arm?",
+      "Any tingling or numbness?",
+      "Recent injury or overuse?"
+    ],
+    hi: [
+      "क्या दाएँ हाथ में दर्द या कमजोरी है?",
+      "क्या झनझनाहट या सुन्नपन है?",
+      "हाल ही में कोई चोट या ज्यादा उपयोग?"
+    ],
+    kn: [
+      "ಬಲ ಕೈಯಲ್ಲಿ ನೋವು ಅಥವಾ ದುರ್ಬಲತೆ ಇದೆಯೆ?",
+      "ಚುಮುಚುಮು ಅಥವಾ ಸುನ್ನಾಗಿರುವುದೇ?",
+      "ಇತ್ತೀಚೆಗೆ ಗಾಯ ಅಥವಾ ಹೆಚ್ಚು ಬಳಸಿದೆಯೇ?"
+    ]
   }
 };
 
 const rules = [
   // Head
-  { part: "Head", answers: [true], specialist: "Neurologist", tests: ["MRI (if severe)"], action: {en:"Rest and monitor, consult if persists", hi:"आराम करें, बने रहने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಮುಂದುವರಿದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"} },
+  { part: "Head", answers: [true], specialist: "Neurologist", tests: ["MRI (if severe)"], action: {en:"Rest and monitor, consult if persists", hi:"आराम करें, बने रहने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಮುಂದುವರಿದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Migraine", "Tension headache"], why: "Your symptoms may be related to migraine or tension headache, as you reported headache with dizziness and/or nausea.", risk: "🟡 Moderate" },
   // Chest
-  { part: "Chest", answers: [true], specialist: "Cardiologist", tests: ["ECG"], action: {en:"Visit clinic soon", hi:"जल्दी डॉक्टर से मिलें", kn:"ಬೇಗ ವೈದ್ಯರನ್ನು ಭೇಟಿಯಾಗಿರಿ"} },
-  { part: "Chest", answers: [false, true], specialist: "Pulmonologist", tests: ["Chest X-ray"], action: {en:"Visit doctor soon", hi:"डॉक्टर से मिलें", kn:"ಬೇಗ ವೈದ್ಯರನ್ನು ಭೇಟಿಯಾಗಿರಿ"} },
+  { part: "Chest", answers: [true], specialist: "Cardiologist", tests: ["ECG"], action: {en:"Visit clinic soon", hi:"जल्दी डॉक्टर से मिलें", kn:"ಬೇಗ ವೈದ್ಯರನ್ನು ಭೇಟಿಯಾಗಿರಿ"}, conditions: ["Angina", "Myocardial Infarction"], why: "Chest pain can be related to heart conditions, so a cardiology review is suggested.", risk: "🔴 High" },
+  { part: "Chest", answers: [false, true], specialist: "Pulmonologist", tests: ["Chest X-ray"], action: {en:"Visit doctor soon", hi:"डॉक्टर से मिलें", kn:"ಬೇಗ ವೈದ್ಯರನ್ನು ಭೇಟಿಯಾಗಿರಿ"}, conditions: ["Asthma", "Bronchitis"], why: "Shortness of breath may indicate a respiratory condition.", risk: "🟡 Moderate" },
   // Abdomen
-  { part: "Abdomen", answers: [true], specialist: "Gastroenterologist", tests: ["Ultrasound"], action: {en:"Monitor diet, consult if severe", hi:"खानपान पर ध्यान दें, गंभीर होने पर डॉक्टर को दिखाएँ", kn:"ಆಹಾರವನ್ನು ಗಮನಿಸಿ, ಗಂಭೀರವಾಗಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"} },
+  { part: "Abdomen", answers: [true], specialist: "Gastroenterologist", tests: ["Ultrasound"], action: {en:"Monitor diet, consult if severe", hi:"खानपान पर ध्यान दें, गंभीर होने पर डॉक्टर को दिखाएँ", kn:"ಆಹಾರವನ್ನು ಗಮನಿಸಿ, ಗಂಭೀರವಾಗಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Indigestion", "Gastritis"], why: "Stomach pain can be due to gastritis or indigestion.", risk: "🟡 Moderate" },
   // Legs
-  { part: "Left Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling", hi:"आराम करें, सूजन होने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಉಬ್ಬಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"} },
-  { part: "Right Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling", hi:"आराम करें, सूजन होने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಉಬ್ಬಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"} }
+  { part: "Left Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling", hi:"आराम करें, सूजन होने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಉಬ್ಬಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Muscle Strain", "Sprain"], why: "Pain/swelling may be due to injury or overuse.", risk: "🟢 Low" },
+  { part: "Right Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling", hi:"आराम करें, सूजन होने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಉಬ್ಬಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Muscle Strain", "Sprain"], why: "Pain/swelling may be due to injury or overuse.", risk: "🟢 Low" },
+  // Arms
+  { part: "Left Arm", answers: [true], specialist: "Orthopedic/Neurologist", tests: ["Nerve conduction study if persistent"], action: {en:"Rest, avoid strain, consult if persists", hi:"आराम करें, बने रहने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಮುಂದುವರಿದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Tendinitis", "Nerve compression"], why: "Pain or numbness in the arm may be related to nerve or muscle problems.", risk: "🟢 Low" },
+  { part: "Right Arm", answers: [true], specialist: "Orthopedic/Neurologist", tests: ["Nerve conduction study if persistent"], action: {en:"Rest, avoid strain, consult if persists", hi:"आराम करें, बने रहने पर डॉक्टर को दिखाएँ", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಮುಂದುವರಿದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Tendinitis", "Nerve compression"], why: "Pain or numbness in the arm may be related to nerve or muscle problems.", risk: "🟢 Low" }
 ];
 
 const wellnessTips = {
@@ -305,7 +350,6 @@ function setLanguage(lang) {
     const key = el.dataset.i18n;
     if (translations[lang][key]) el.textContent = translations[lang][key];
   });
-  // Also update popups if open
   if (selectedZone && document.getElementById("qa-modal").classList.contains("block")) {
     showQAModal(selectedZone);
   }
@@ -397,8 +441,8 @@ function submitQA(zone) {
   }
   answers[zone] = ansArr;
   closeQAModal();
-  // Recommendation logic: simplified (yes/no/contains "pain" etc.)
-  let normalized = ansArr.map(a=>/yes|हाँ|ಹೌದು|ಹೌದು|ಹಾದು|ಹೌದು|ಹೌದು|pain|दर्द|ನೋವು|ಹೌದು|ಹೌದು|ಹೌದು|pain|दर्द|ನೋವು|ಹೌದು|pain|दर्द|ನೋವು|ಹೌದು|pain|ದर्द|ನೋವು|pain|ದर्द|ನೋವು|pain|दर्द|ನೋವು|pain|दर्द|ನೋವು|pain|दर्द|ನೋವು/gi.test(a.trim().toLowerCase()));
+
+  let normalized = ansArr.map(a=>/yes|हाँ|ಹೌದು|pain|दर्द|ನೋವು|weakness|कमजोरी|ದುರ್ಬಲತೆ|swelling|सूजन|ಉಬ್ಬು|tingling|झनझनाहट|ಚುಮುಚುಮು|numbness|सुन्नपन|ಸುನ್ನಾಗಿರುವುದೇ/i.test(a.trim().toLowerCase()));
   let rec = rules.find(r => r.part === zone && normalized.some(v=>v));
   if (!rec) rec = {
     specialist:"General Physician",
@@ -407,9 +451,11 @@ function submitQA(zone) {
       en:"Monitor and consult if needed",
       hi:"निगरानी करें, ज़रूरत हो तो डॉक्टर से मिलें",
       kn:"ಗಮನಿಸಿ, ಅಗತ್ಯವಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"
-    }
+    },
+    conditions: ["Unspecified"],
+    why: "Symptoms are non-specific.",
+    risk: "🟢 Low"
   };
-  // Output
   sessionId = Date.now();
   saveSession({
     id: sessionId,
@@ -426,19 +472,22 @@ function submitQA(zone) {
       <div class="mb-2"><strong>${translations[currentLang].responses}:</strong>
         <ul class="list-disc pl-6">${qList.map((q,i)=>`<li>${q} <span class="text-green-300">→</span> <span>${ansArr[i]}</span></li>`).join('')}</ul>
       </div>
+      <div class="mb-2"><strong>Possible Conditions:</strong> ${rec.conditions ? rec.conditions.join(', ') : "Unspecified"}</div>
+      <div class="mb-2"><strong>Why this?</strong> ${rec.why || ""}</div>
+      <div class="mb-2"><strong>Risk Level:</strong> ${rec.risk || "🟢 Low"}</div>
       <div class="mb-2"><strong>${translations[currentLang].specialist}:</strong> ${rec.specialist}</div>
       <div class="mb-2"><strong>${translations[currentLang].tests}:</strong> ${rec.tests.join(', ')}</div>
       <div class="mb-2"><strong>${translations[currentLang].action}:</strong> ${rec.action[currentLang]}</div>
       <div class="mb-3 bg-green-800/80 px-3 py-2 rounded">${translations[currentLang].wellnessTip}: ${wellnessTips[currentLang][Math.floor(Math.random()*wellnessTips[currentLang].length)]}</div>
       <button onclick="showDoctorSummary()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 mt-2 rounded">${translations[currentLang].viewDoctorSummary}</button>
       <button onclick="showAllSessions()" class="bg-yellow-500 text-white px-3 py-1 rounded mt-3">${translations[currentLang].viewAllSessions}</button>
+      <button onclick="downloadSessionPDF()" class="bg-purple-600 text-white px-4 py-2 rounded mt-2 ml-2">${translations[currentLang].downloadPDF}</button>
       <button onclick="window.location.reload()" class="bg-red-500 hover:bg-red-600 ml-3 text-white px-4 py-2 rounded">${translations[currentLang].startOver}</button>
     </div>
   `;
   document.getElementById("output").innerHTML = out;
 }
 
-// -- Session Storage and Dashboard --
 function saveSession(session) {
   let allSessions = JSON.parse(localStorage.getItem('symptomSessions') || '[]');
   allSessions.push(session);
@@ -487,27 +536,35 @@ function viewSessionDetail(id) {
 }
 
 function showDoctorSummary() {
-  // Compose summary for doctor
   let content = `
     <div><strong>${translations[currentLang].timestamp}:</strong> ${new Date(sessionId).toLocaleString()}</div>
     <div><strong>${translations[currentLang].selectedBodyPart}:</strong> ${selectedZone}</div>
     <div><strong>Gender:</strong> ${selectedGender}</div>
-    <div><strong>${translations[currentLang].followup}:</strong><ul class="list-disc ml-6">${questionsPerZone[selectedZone][currentLang].map((q,i)=>`<li>${q}: <span class="text-blue-300">${answers[selectedZone][i]}</span></li>`).join('')}</ul></div>
+    <div><strong>Raw Answers:</strong>
+      <ul class="list-disc ml-6">${questionsPerZone[selectedZone][currentLang].map((q,i)=>`<li>${q}: <span class="text-blue-300">${answers[selectedZone][i]}</span></li>`).join('')}</ul>
+    </div>
   `;
-  let rec = rules.find(r => r.part === selectedZone && answers[selectedZone].some(a=>/yes|हाँ|ಹೌದು|pain|दर्द|ನೋವು/i.test(a)));
+  let rec = rules.find(r => r.part === selectedZone && answers[selectedZone].some(a=>/yes|हाँ|ಹೌದು|pain|दर्द|ನೋವು|weakness|कमजोरी|ದುರ್ಬಲತೆ|swelling|सूजन|ಉಬ್ಬು|tingling|झनझनाहट|ಚುಮುಚುಮು|numbness|सुन्नपन|ಸುನ್ನಾಗಿರುವುದೇ/i.test(a)));
   if (!rec) rec = {
-    specialist:"General Physician",
-    tests:["Basic Checkup"],
-    action:{
-      en:"Monitor and consult if needed",
-      hi:"निगरानी करें, ज़रूरत हो तो डॉक्टर से मिलें",
-      kn:"ಗಮನಿಸಿ, ಅಗತ್ಯವಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"
-    }
+    specialist: "General Physician",
+    tests: ["Basic Checkup"],
+    action: {
+      en: "Monitor and consult if needed",
+      hi: "निगरानी करें, ज़रूरत हो तो डॉक्टर से मिलें",
+      kn: "ಗಮನಿಸಿ, ಅಗತ್ಯವಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"
+    },
+    conditions: ["Unspecified"],
+    why: "Symptoms are non-specific.",
+    risk: "🟢 Low"
   };
   content += `
-    <div class="mt-2"><strong>${translations[currentLang].specialist}:</strong> ${rec.specialist}</div>
+    <div class="mt-2"><strong>Differential Diagnosis:</strong> ${rec.conditions ? rec.conditions.join(', ') : "Unspecified"}</div>
+    <div><strong>Red Flags:</strong> ${rec.risk || "🟢 Low"}</div>
+    <div><strong>Reasoning:</strong> ${rec.why || ""}</div>
+    <div><strong>${translations[currentLang].specialist}:</strong> ${rec.specialist}</div>
     <div><strong>${translations[currentLang].tests}:</strong> ${rec.tests.join(', ')}</div>
     <div><strong>${translations[currentLang].action}:</strong> ${rec.action[currentLang]}</div>
+    <div class="mt-2 text-xs text-gray-400">Note: This summary is informational and not a substitute for a doctor's advice.</div>
   `;
   document.getElementById("summary-content").innerHTML = content;
   document.getElementById("doctor-summary").classList.remove("hidden");
@@ -518,6 +575,90 @@ function closeDoctorSummary() {
 
 document.addEventListener("DOMContentLoaded", updateUIText);
 function updateUIText() { setLanguage(currentLang); }
+
+// ---- PDF Download Function ----
+function downloadSessionPDF() {
+  if (!selectedZone || !answers[selectedZone] || !selectedGender) {
+    alert("Please complete a session to download as PDF.");
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const zone = selectedZone;
+  const gender = selectedGender;
+  const qList = questionsPerZone[zone][currentLang];
+  const ansArr = answers[zone];
+  const dateStr = new Date(sessionId).toLocaleString();
+  let normalized = ansArr.map(a=>/yes|हाँ|ಹೌದು|pain|दर्द|ನೋವು|weakness|कमजोरी|ದುರ್ಬಲತೆ|swelling|सूजन|ಉಬ್ಬು|tingling|झनझनाहट|ಚುಮುಚುಮು|numbness|सुन्नपन|ಸುನ್ನಾಗಿರುವುದೇ/i.test(a.trim().toLowerCase()));
+  let rec = rules.find(r => r.part === zone && normalized.some(v=>v));
+  if (!rec) rec = {
+    specialist:"General Physician",
+    tests:["Basic Checkup"],
+    action:{
+      en:"Monitor and consult if needed",
+      hi:"निगरानी करें, ज़रूरत हो तो डॉक्टर से मिलें",
+      kn:"ಗಮನಿಸಿ, ಅಗತ್ಯವಿದ್ದರೆ ವೈದ್ಯರನ್ನು ಸಂಪರ್ಕಿಸಿ"
+    },
+    conditions: ["Unspecified"],
+    why: "Symptoms are non-specific.",
+    risk: "🟢 Low"
+  };
+
+  doc.setFontSize(16);
+  doc.text("Symptom Navigator - Session Summary", 12, 15);
+  doc.setFontSize(12);
+  doc.text(`Date: ${dateStr}`, 12, 22);
+  doc.text(`Gender: ${gender}`, 12, 28);
+  doc.text(`Body Part: ${zone}`, 12, 34);
+
+  let y = 42;
+  doc.setFontSize(12);
+  doc.text("Questions & Answers:", 12, y);
+
+  y += 7;
+  for (let i = 0; i < qList.length; i++) {
+    const q = qList[i];
+    const a = ansArr[i] || "";
+    doc.setFont("helvetica", "bold");
+    doc.text(`Q${i+1}: ${q}`, 12, y);
+    y += 6;
+    doc.setFont("helvetica", "normal");
+    doc.text(`A${i+1}: ${a}`, 16, y);
+    y += 7;
+    if (y > 270) {
+      doc.addPage();
+      y = 15;
+    }
+  }
+  y += 3;
+  doc.setFont("helvetica", "bold");
+  doc.text(`Possible Conditions:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.conditions ? rec.conditions.join(', ') : "Unspecified"}`, 52, y);
+  y += 7;
+  doc.setFont("helvetica", "bold");
+  doc.text(`Why this:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.why || ""}`, 34, y);
+  y += 7;
+  doc.setFont("helvetica", "bold");
+  doc.text(`Risk Level:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.risk || "🟢 Low"}`, 36, y);
+  y += 7;
+  doc.setFont("helvetica", "bold");
+  doc.text(`Specialist:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.specialist}`, 38, y);
+  y += 7;
+  doc.setFont("helvetica", "bold");
+  doc.text(`Tests:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.tests.join(', ')}`, 28, y);
+  y += 7;
+  doc.setFont("helvetica", "bold");
+  doc.text(`Advice:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.action[currentLang]}`, 28, y);
+  y += 10;
+  doc.setFont("helvetica", "bold");
+  doc.text(`Wellness Tip:`, 12, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(`${wellnessTips[currentLang][Math.floor(Math.random()*wellnessTips[currentLang].length)]}`, 40, y);
+
+  doc.save("session-summary.pdf");
+}
 </script>
+<!-- jsPDF library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
