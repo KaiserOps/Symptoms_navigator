@@ -171,8 +171,77 @@ const translations = {
     deleteAll: "Delete All Data",
     delete: "Delete",
     shareQR: "Share via QR"
+  },
+  hi: {
+    appTitle: "लक्षण नेविगेटर",
+    subtitle: "अपने स्वास्थ्य को समझने की ओर स्मार्ट कदम",
+    selectGender: "लिंग चुनें",
+    male: "पुरुष",
+    female: "महिला",
+    start: "शुरू करें",
+    doctorSummary: "डॉक्टर दृश्य: रोगी रिपोर्ट",
+    close: "बंद करें",
+    submit: "जमा करें",
+    next: "आगे",
+    speak: "🔊 पढ़ें",
+    mic: "🎤 बोलें",
+    summary: "सारांश",
+    specialist: "विशेषज्ञ",
+    tests: "सिफारिश की गई जांच",
+    action: "सलाह",
+    followup: "फॉलो-अप प्रश्न",
+    selectedBodyPart: "शरीर का भाग",
+    answer: "उत्तर",
+    responses: "उत्तर",
+    startOver: "फिर से शुरू करें",
+    viewDoctorSummary: "डॉक्टर सारांश देखें",
+    timestamp: "समय",
+    wellnessTip: "स्वास्थ्य टिप",
+    pleaseAnswer: "कृपया सभी प्रश्नों के उत्तर दें।",
+    viewAllSessions: "सभी सत्र देखें",
+    downloadPDF: "PDF डाउनलोड करें",
+    doctorDashboard: "डॉक्टर डैशबोर्ड",
+    exportCSV: "सभी CSV के रूप में निर्यात करें",
+    exportJSON: "सभी JSON के रूप में निर्यात करें",
+    deleteAll: "सभी डेटा हटाएं",
+    delete: "हटाएं",
+    shareQR: "QR से साझा करें"
+  },
+  kn: {
+    appTitle: "ಲಕ್ಷಣ ನ್ಯಾವಿಗೇಟರ್",
+    subtitle: "ನಿಮ್ಮ ಆರೋಗ್ಯವನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಸ್ಮಾರ್ಟ್ ಹೆಜ್ಜೆ",
+    selectGender: "ಲಿಂಗ ಆಯ್ಕೆಮಾಡಿ",
+    male: "ಪುರುಷ",
+    female: "ಮಹಿಳೆ",
+    start: "ಪ್ರಾರಂಭಿಸಿ",
+    doctorSummary: "ಡಾಕ್ಟರ್ ವೀಕ್ಷಣೆ: ರೋಗಿ ವರದಿ",
+    close: "ಮುಚ್ಚಿ",
+    submit: "ಸಲ್ಲಿಸಿ",
+    next: "ಮುಂದೆ",
+    speak: "🔊 ಓದಿ",
+    mic: "🎤 ಮಾತನಾಡಿ",
+    summary: "ಸಾರಾಂಶ",
+    specialist: "ತಜ್ಞರು",
+    tests: "ಶಿಫಾರಸು ಮಾಡಿದ ಪರೀಕ್ಷೆಗಳು",
+    action: "ಸಲಹೆ",
+    followup: "ಅನುಸರಣೆ ಪ್ರಶ್ನೆಗಳು",
+    selectedBodyPart: "ದೇಹದ ಭಾಗ",
+    answer: "ಉತ್ತರ",
+    responses: "ಉತ್ತರಗಳು",
+    startOver: "ಮತ್ತೆ ಪ್ರಾರಂಭಿಸಿ",
+    viewDoctorSummary: "ಡಾಕ್ಟರ್ ಸಾರಾಂಶ ವೀಕ್ಷಿಸಿ",
+    timestamp: "ಸಮಯ",
+    wellnessTip: "ಆರೋಗ್ಯ ಸಲಹೆ",
+    pleaseAnswer: "ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರ ನೀಡಿ.",
+    viewAllSessions: "ಎಲ್ಲಾ ಸೆಷನ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಿ",
+    downloadPDF: "PDF ಅನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+    doctorDashboard: "ಡಾಕ್ಟರ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+    exportCSV: "ಎಲ್ಲವನ್ನೂ CSV ಆಗಿ ರಫ್ತು ಮಾಡಿ",
+    exportJSON: "ಎಲ್ಲವನ್ನೂ JSON ಆಗಿ ರಫ್ತು ಮಾಡಿ",
+    deleteAll: "ಎಲ್ಲಾ ಡೇಟಾವನ್ನು ಅಳಿಸಿ",
+    delete: "ಅಳಿಸಿ",
+    shareQR: "QR ಮೂಲಕ ಹಂಚಿಕೆ ಮಾಡಿ"
   }
-  // Add hi and kn translations as needed!
 };
 
 const questionsPerZone = {
@@ -181,6 +250,16 @@ const questionsPerZone = {
       "Do you have a headache?",
       "Is there dizziness or blurred vision?",
       "Do you feel nausea?"
+    ],
+    hi: [
+      "क्या आपको सिरदर्द है?",
+      "क्या चक्कर या धुंधला दिख रहा है?",
+      "क्या आपको मतली महसूस हो रही है?"
+    ],
+    kn: [
+      "ನಿಮಗೆ ತಲೆನೋವು ಇದೆಯೆ?",
+      "ನಿಮಗೆ ತಲೆಸುತ್ತು ಅಥವಾ ಮಂಕು ಕಾಣುತ್ತಿದ್ದೆಯೆ?",
+      "ನಿಮಗೆ ವಾಂತಿ ಭಾವನೆಯಾಗುತ್ತಿದೆಯೆ?"
     ]
   },
   Chest: {
@@ -188,6 +267,16 @@ const questionsPerZone = {
       "Do you feel chest pain?",
       "Is there any shortness of breath?",
       "Do you have cough or palpitations?"
+    ],
+    hi: [
+      "क्या आपको छाती में दर्द है?",
+      "क्या सांस लेने में तकलीफ है?",
+      "क्या आपको खांसी या धड़कन तेज है?"
+    ],
+    kn: [
+      "ನಿಮಗೆ ಎದೆನೋವು ಇದೆಯೆ?",
+      "ಉಸಿರಾಟದಲ್ಲಿ ಸಮಸ್ಯೆ ಇದೆಯೆ?",
+      "ನಿಮಗೆ ಕೆಮ್ಮು ಅಥವಾ ಹೃದಯಬಡಿತ ಇದೆಯೆ?"
     ]
   },
   Abdomen: {
@@ -195,6 +284,16 @@ const questionsPerZone = {
       "Do you have stomach pain?",
       "Is there any bloating or vomiting?",
       "Any change in bowel habits?"
+    ],
+    hi: [
+      "क्या आपको पेट में दर्द है?",
+      "क्या सूजन या उल्टी है?",
+      "क्या मल में कोई बदलाव है?"
+    ],
+    kn: [
+      "ನಿಮಗೆ ಹೊಟ್ಟೆನೋವು ಇದೆಯೆ?",
+      "ಉಬ್ಬು ಅಥವಾ ವಾಂತಿ ಇದೆಯೆ?",
+      "ಮಲದಲ್ಲಿ ಬದಲಾವಣೆ ಇದೆಯೆ?"
     ]
   },
   "Left Leg": {
@@ -202,6 +301,16 @@ const questionsPerZone = {
       "Is there pain or swelling in the left leg?",
       "Do you feel numbness or tingling?",
       "Is it difficult to walk?"
+    ],
+    hi: [
+      "क्या बाएं पैर में दर्द या सूजन है?",
+      "क्या झनझनाहट या सुन्नपन है?",
+      "क्या चलने में कठिनाई है?"
+    ],
+    kn: [
+      "ಎಡ ಕಾಲಿನಲ್ಲಿ ನೋವು ಅಥವಾ ಉಬ್ಬು ಇದೆಯೆ?",
+      "ಚುಮುಚುಮು ಅಥವಾ ಸುನ್ನಾಗಿರುವುದೇ?",
+      "ನಡಿಗೆಯಲ್ಲಿ ಕಷ್ಟ ಇದೆಯೆ?"
     ]
   },
   "Right Leg": {
@@ -209,6 +318,16 @@ const questionsPerZone = {
       "Is there pain or swelling in the right leg?",
       "Do you feel numbness or tingling?",
       "Is it difficult to walk?"
+    ],
+    hi: [
+      "क्या दाएं पैर में दर्द या सूजन है?",
+      "क्या झनझनाहट या सुन्नपन है?",
+      "क्या चलने में कठिनाई है?"
+    ],
+    kn: [
+      "ಬಲ ಕಾಲಿನಲ್ಲಿ ನೋವು ಅಥವಾ ಉಬ್ಬು ಇದೆಯೆ?",
+      "ಚುಮುಚುಮು ಅಥವಾ ಸುನ್ನಾಗಿರುವುದೇ?",
+      "ನಡಿಗೆಯಲ್ಲಿ ಕಷ್ಟ ಇದೆಯೆ?"
     ]
   },
   "Left Arm": {
@@ -216,6 +335,16 @@ const questionsPerZone = {
       "Is there pain or weakness in the left arm?",
       "Any tingling or numbness?",
       "Recent injury or overuse?"
+    ],
+    hi: [
+      "क्या बाएं हाथ में दर्द या कमजोरी है?",
+      "क्या झनझनाहट या सुन्नपन है?",
+      "हाल ही में कोई चोट या अधिक उपयोग?"
+    ],
+    kn: [
+      "ಎಡ ಕೈಯಲ್ಲಿ ನೋವು ಅಥವಾ ದುರ್ಬಲತೆ ಇದೆಯೆ?",
+      "ಚುಮುಚುಮು ಅಥವಾ ಸುನ್ನಾಗಿರುವುದೇ?",
+      "ಇತ್ತೀಚೆಗೆ ಗಾಯ ಅಥವಾ ಅಧಿಕ ಬಳಕೆ?"
     ]
   },
   "Right Arm": {
@@ -223,25 +352,35 @@ const questionsPerZone = {
       "Is there pain or weakness in the right arm?",
       "Any tingling or numbness?",
       "Recent injury or overuse?"
+    ],
+    hi: [
+      "क्या दाएं हाथ में दर्द या कमजोरी है?",
+      "क्या झनझनाहट या सुन्नपन है?",
+      "हाल ही में कोई चोट या अधिक उपयोग?"
+    ],
+    kn: [
+      "ಬಲ ಕೈಯಲ್ಲಿ ನೋವು ಅಥವಾ ದುರ್ಬಲತೆ ಇದೆಯೆ?",
+      "ಚುಮುಚುಮು ಅಥವಾ ಸುನ್ನಾಗಿರುವುದೇ?",
+      "ಇತ್ತೀಚೆಗೆ ಗಾಯ ಅಥವಾ ಅಧಿಕ ಬಳಕೆ?"
     ]
   }
 };
 
 const rules = [
   // Head
-  { part: "Head", answers: [true], specialist: "Neurologist", tests: ["MRI (if severe)"], action: {en:"Rest and monitor, consult if persists"}, conditions: ["Migraine", "Tension headache"], why: "Your symptoms may be related to migraine or tension headache, as you reported headache with dizziness and/or nausea.", risk: "med" },
+  { part: "Head", answers: [true], specialist: "Neurologist", tests: ["MRI (if severe)"], action: {en:"Rest and monitor, consult if persists", hi:"आराम करें और देखें, अगर बने रहे तो सलाह लें", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ ಮತ್ತು ನಿರೀಕ್ಷಿಸಿ, ಮುಂದುವರೆದರೆ ಸಲಹೆ ಪಡೆಯಿರಿ"}, conditions: ["Migraine", "Tension headache"], why: "Your symptoms may be related to migraine or tension headache, as you reported headache with dizziness and/or nausea.", risk: "med" },
   // Chest
-  { part: "Chest", answers: [true,true], specialist: "Cardiologist", tests: ["ECG"], action: {en:"Visit clinic or ER immediately"}, conditions: ["Heart Attack", "Angina"], why: "Chest pain with shortness of breath is a medical emergency.", risk: "high", emergency: true },
-  { part: "Chest", answers: [true], specialist: "Cardiologist", tests: ["ECG"], action: {en:"Visit clinic soon"}, conditions: ["Angina"], why: "Chest pain can be related to heart conditions.", risk: "med" },
-  { part: "Chest", answers: [false, true], specialist: "Pulmonologist", tests: ["Chest X-ray"], action: {en:"Visit doctor soon"}, conditions: ["Asthma", "Bronchitis"], why: "Shortness of breath may indicate a respiratory condition.", risk: "med" },
+  { part: "Chest", answers: [true,true], specialist: "Cardiologist", tests: ["ECG"], action: {en:"Visit clinic or ER immediately", hi:"क्लिनिक या आपातकालीन कक्ष में तुरंत जाएं", kn:"ಕ್ಲಿನಿಕ್ ಅಥವಾ ತುರ್ತು ವಿಭಾಗವನ್ನು ತಕ್ಷಣ ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Heart Attack", "Angina"], why: "Chest pain with shortness of breath is a medical emergency.", risk: "high", emergency: true },
+  { part: "Chest", answers: [true], specialist: "Cardiologist", tests: ["ECG"], action: {en:"Visit clinic soon", hi:"जल्द ही क्लिनिक जाएं", kn:"ಶೀಘ್ರದಲ್ಲಿಯೇ ಕ್ಲಿನಿಕ್‌ಗೆ ಹೋಗಿ"}, conditions: ["Angina"], why: "Chest pain can be related to heart conditions.", risk: "med" },
+  { part: "Chest", answers: [false, true], specialist: "Pulmonologist", tests: ["Chest X-ray"], action: {en:"Visit doctor soon", hi:"जल्द ही डॉक्टर से मिलें", kn:"ಶೀಘ್ರದಲ್ಲಿಯೇ ಡಾಕ್ಟರ್‌ಗೆ ಹೋಗಿ"}, conditions: ["Asthma", "Bronchitis"], why: "Shortness of breath may indicate a respiratory condition.", risk: "med" },
   // Abdomen
-  { part: "Abdomen", answers: [true], specialist: "Gastroenterologist", tests: ["Ultrasound"], action: {en:"Monitor diet, consult if severe"}, conditions: ["Indigestion", "Gastritis"], why: "Stomach pain can be due to gastritis or indigestion.", risk: "med" },
+  { part: "Abdomen", answers: [true], specialist: "Gastroenterologist", tests: ["Ultrasound"], action: {en:"Monitor diet, consult if severe", hi:"आहार पर नजर रखें, गंभीर होने पर सलाह लें", kn:"ಆಹಾರವನ್ನು ಗಮನಿಸಿ, ಗಂಭೀರವಾದರೆ ಸಲಹೆ ಪಡೆಯಿರಿ"}, conditions: ["Indigestion", "Gastritis"], why: "Stomach pain can be due to gastritis or indigestion.", risk: "med" },
   // Legs
-  { part: "Left Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling"}, conditions: ["Muscle Strain", "Sprain"], why: "Pain/swelling may be due to injury or overuse.", risk: "low" },
-  { part: "Right Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling"}, conditions: ["Muscle Strain", "Sprain"], why: "Pain/swelling may be due to injury or overuse.", risk: "low" },
+  { part: "Left Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling", hi:"आराम करें और देखें, सूजन हो तो डॉक्टर से मिलें", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ ಮತ್ತು ಗಮನಿಸಿ, ಉಬ್ಬು ಇದ್ದರೆ ಡಾಕ್ಟರ್ ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Muscle Strain", "Sprain"], why: "Pain/swelling may be due to injury or overuse.", risk: "low" },
+  { part: "Right Leg", answers: [true], specialist: "Orthopedic", tests: ["X-ray"], action: {en:"Rest and observe, visit doctor if swelling", hi:"आराम करें और देखें, सूजन हो तो डॉक्टर से मिलें", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ ಮತ್ತು ಗಮನಿಸಿ, ಉಬ್ಬು ಇದ್ದರೆ ಡಾಕ್ಟರ್ ಸಂಪರ್ಕಿಸಿ"}, conditions: ["Muscle Strain", "Sprain"], why: "Pain/swelling may be due to injury or overuse.", risk: "low" },
   // Arms
-  { part: "Left Arm", answers: [true], specialist: "Orthopedic/Neurologist", tests: ["Nerve conduction study if persistent"], action: {en:"Rest, avoid strain, consult if persists"}, conditions: ["Tendinitis", "Nerve compression"], why: "Pain or numbness in the arm may be related to nerve or muscle problems.", risk: "low" },
-  { part: "Right Arm", answers: [true], specialist: "Orthopedic/Neurologist", tests: ["Nerve conduction study if persistent"], action: {en:"Rest, avoid strain, consult if persists"}, conditions: ["Tendinitis", "Nerve compression"], why: "Pain or numbness in the arm may be related to nerve or muscle problems.", risk: "low" }
+  { part: "Left Arm", answers: [true], specialist: "Orthopedic/Neurologist", tests: ["Nerve conduction study if persistent"], action: {en:"Rest, avoid strain, consult if persists", hi:"आराम करें, दबाव न डालें, बने रहे तो सलाह लें", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಒತ್ತಡ ತಪ್ಪಿಸಿ, ಮುಂದುವರೆದರೆ ಸಲಹೆ ಪಡೆಯಿರಿ"}, conditions: ["Tendinitis", "Nerve compression"], why: "Pain or numbness in the arm may be related to nerve or muscle problems.", risk: "low" },
+  { part: "Right Arm", answers: [true], specialist: "Orthopedic/Neurologist", tests: ["Nerve conduction study if persistent"], action: {en:"Rest, avoid strain, consult if persists", hi:"आराम करें, दबाव न डालें, बने रहे तो सलाह लें", kn:"ವಿಶ್ರಾಂತಿ ಮಾಡಿ, ಒತ್ತಡ ತಪ್ಪಿಸಿ, ಮುಂದುವರೆದರೆ ಸಲಹೆ ಪಡೆಯಿರಿ"}, conditions: ["Tendinitis", "Nerve compression"], why: "Pain or numbness in the arm may be related to nerve or muscle problems.", risk: "low" }
 ];
 
 const wellnessTips = {
@@ -249,6 +388,16 @@ const wellnessTips = {
     "Stay hydrated and rest as needed.",
     "Monitor symptoms and seek help if worsening.",
     "Eat healthy and avoid stress."
+  ],
+  hi: [
+    "पर्याप्त पानी पिएं और आराम करें।",
+    "लक्षणों पर नजर रखें और जरूरत हो तो मदद लें।",
+    "स्वस्थ खाएं और तनाव से बचें।"
+  ],
+  kn: [
+    "ಪರ್ಯಾಯವಾಗಿ ನೀರು ಕುಡಿಯಿರಿ ಮತ್ತು ವಿಶ್ರಾಂತಿ ಪಡೆಯಿರಿ.",
+    "ಲಕ್ಷಣಗಳನ್ನು ಗಮನಿಸಿ ಮತ್ತು ಅವಶ್ಯಕತೆ ಇದ್ದರೆ ಸಹಾಯವನ್ನು ಹುಡುಕಿ.",
+    "ಆರೋಗ್ಯಕರ ಆಹಾರ ಸೇವಿಸಿ ಮತ್ತು ಒತ್ತಡವನ್ನು ತಪ್ಪಿಸಿ."
   ]
 };
 
@@ -364,7 +513,9 @@ function submitQA(zone) {
     specialist:"General Physician",
     tests:["Basic Checkup"],
     action:{
-      en:"Monitor and consult if needed"
+      en:"Monitor and consult if needed",
+      hi:"निगरानी करें और जरूरत पड़ने पर सलाह लें",
+      kn:"ನಿರೀಕ್ಷಿಸಿ ಮತ್ತು ಅಗತ್ಯವಿದ್ದರೆ ಸಲಹೆ ಪಡೆಯಿರಿ"
     },
     conditions: ["Unspecified"],
     why: "Symptoms are non-specific.",
@@ -395,7 +546,7 @@ function submitQA(zone) {
       <div class="mb-2"><strong>Risk Level:</strong> <span class="${riskClass}">${riskLabel}</span></div>
       <div class="mb-2"><strong>${translations[currentLang].specialist}:</strong> ${rec.specialist}</div>
       <div class="mb-2"><strong>${translations[currentLang].tests}:</strong> ${rec.tests.join(', ')}</div>
-      <div class="mb-2"><strong>${translations[currentLang].action}:</strong> ${rec.action[currentLang]}</div>
+      <div class="mb-2"><strong>${translations[currentLang].action}:</strong> ${rec.action[currentLang] || rec.action.en}</div>
       <div class="mb-3 bg-green-800/80 px-3 py-2 rounded">${translations[currentLang].wellnessTip}: ${wellnessTips[currentLang][Math.floor(Math.random()*wellnessTips[currentLang].length)]}</div>
       <div class="flex flex-wrap gap-2 mt-2">
         <button onclick="showDoctorDashboard()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">${translations[currentLang].doctorDashboard}</button>
@@ -570,7 +721,9 @@ function downloadSessionPDF() {
     specialist:"General Physician",
     tests:["Basic Checkup"],
     action:{
-      en:"Monitor and consult if needed"
+      en:"Monitor and consult if needed",
+      hi:"निगरानी करें और जरूरत पड़ने पर सलाह लें",
+      kn:"ನಿರೀಕ್ಷಿಸಿ ಮತ್ತು ಅಗತ್ಯವಿದ್ದರೆ ಸಲಹೆ ಪಡೆಯಿರಿ"
     },
     conditions: ["Unspecified"],
     why: "Symptoms are non-specific.",
@@ -621,7 +774,7 @@ function downloadSessionPDF() {
   doc.text(`Tests:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.tests.join(', ')}`, 28, y);
   y += 7;
   doc.setFont("helvetica", "bold");
-  doc.text(`Advice:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.action[currentLang]}`, 28, y);
+  doc.text(`Advice:`, 12, y); doc.setFont("helvetica", "normal"); doc.text(`${rec.action[currentLang] || rec.action.en}`, 28, y);
   y += 10;
   doc.setFont("helvetica", "bold");
   doc.text(`Wellness Tip:`, 12, y);
