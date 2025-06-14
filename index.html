@@ -367,7 +367,28 @@ const questionsPerZone = {
   }
 };
 
-// --- (rest of your code unchanged) ---
+// --- SPEECH SYNTHESIS (VOICE READ) ---
+function speakText(elementId) {
+  const text = document.getElementById(elementId).innerText;
+  speak(text);
+}
+function speakAllQuestions() {
+  const zone = selectedZone;
+  if (!zone) return;
+  const qList = questionsPerZone[zone][currentLang] || questionsPerZone[zone].en;
+  speak(qList.join('. '));
+}
+function speak(text) {
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+  }
+  const utter = new window.SpeechSynthesisUtterance(text);
+  if (currentLang === 'hi') utter.lang = 'hi-IN';
+  else if (currentLang === 'kn') utter.lang = 'kn-IN';
+  else utter.lang = 'en-US';
+  utter.rate = 0.95;
+  window.speechSynthesis.speak(utter);
+}
 
 function setLanguage(lang) {
   currentLang = lang;
@@ -415,17 +436,22 @@ function showQAModal(zone) {
   qList.forEach((q, i) => {
     html += `
       <div class="mb-3">
-        <span>${q}</span>
+        <span id="qtext${i}">${q}</span>
+        <button onclick="speakText('qtext${i}')" class="ml-2 text-green-400" title="Speak">${translations[currentLang].speak}</button>
         <input type="text" id="ans${i}" class="mt-2 w-full p-2 rounded bg-gray-800 text-white" />
       </div>
     `;
   });
-  html += `<button onclick="submitQA('${zone}')" class="bg-green-500 px-4 py-2 mt-2 rounded">${translations[currentLang].submit}</button>`;
+  html += `
+    <button onclick="speakAllQuestions()" class="bg-blue-600 text-white px-3 py-1 rounded mb-2">${translations[currentLang].speak} All</button>
+    <button onclick="submitQA('${zone}')" class="bg-green-500 px-4 py-2 mt-2 rounded">${translations[currentLang].submit}</button>
+  `;
   document.getElementById("qa-title").innerText = (translations[currentLang][zone] || zone);
   document.getElementById("qa-questions").innerHTML = html;
   document.getElementById("qa-modal").classList.remove("hidden");
   document.getElementById("qa-modal").classList.add("block");
 }
+
 function closeQAModal() {
   document.getElementById("qa-modal").classList.add("hidden");
   document.getElementById("qa-modal").classList.remove("block");
